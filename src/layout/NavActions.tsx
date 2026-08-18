@@ -1,8 +1,8 @@
 import { type FormEvent, useState } from 'react'
-import { Heart, Search, ShoppingBag } from 'lucide-react'
+import { Globe, Heart, Search, ShoppingBag } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useIntl } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Link, useLocation } from 'react-router-dom'
 import { ProfileMenu } from '@/components/ProfileMenu'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -116,10 +116,28 @@ export const NavSearch = () => {
 
 export const NavActions = () => {
   const intl = useIntl()
+  const { pathname } = useLocation()
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE
+  const nextLocale: Locale = locale === 'en' ? 'ar' : 'en'
+  const switchedPath = getLocalizedPath(pathname, nextLocale)
 
   return (
     <>
+      <Link
+        to={switchedPath}
+        aria-label={nextLocale === 'en' ? 'Switch to English' : 'التبديل إلى العربية'}
+        className={iconClassName}
+      >
+        <motion.span
+          className="inline-flex items-center justify-center gap-1 text-xs font-medium"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+        >
+          <Globe className="size-4" aria-hidden="true" />
+          <FormattedMessage id="nav.language" />
+        </motion.span>
+      </Link>
+
       <Link to={getLocalizedPath('/wishlist', locale)} aria-label={intl.formatMessage({ id: 'nav.wishlist' })}>
         <motion.span
           className={iconClassName}
