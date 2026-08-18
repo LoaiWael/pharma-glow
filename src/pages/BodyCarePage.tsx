@@ -1,8 +1,13 @@
+import { FormattedMessage } from 'react-intl'
 
-const BodycarePage = () => {
+const BodyCarePage = () => {
   return (
-    <div>BodycarePage</div>
+    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <h1 className="text-secondary">
+        <FormattedMessage id="category.bodycare.title" />
+      </h1>
+    </section>
   )
 }
 
-export default BodycarePage
+export default BodyCarePage
