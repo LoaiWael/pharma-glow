@@ -13,7 +13,7 @@ const PROMO_KEYS = [
 
 const GLOW_SEPARATOR = '✦'
 
-export const HomePromoTicker = () => {
+export const PromoTicker = () => {
   const intl = useIntl()
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE
   const direction = LOCALE_DIR[locale]
@@ -25,9 +25,9 @@ export const HomePromoTicker = () => {
     <motion.section
       animate={{ opacity: 1, y: 0 }}
       aria-label={intl.formatMessage({ id: 'home.promo.label' })}
-      className="full-bleed mt-4 bg-secondary"
+      className="full-bleed relative z-10 bg-secondary shadow-xs"
       dir={direction}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
       <TextLoop

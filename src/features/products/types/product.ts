@@ -1,10 +1,23 @@
-export type ProductCategory = "skin_care" | "body_care" | string;
+export type ProductCategory = "skin_care" | "body_care" | "hair_care" | "makeup" | string;
+export type ProductType = "all" | "serum" | "cream" | "cleanser" | "sunscreen" | "oil" | "scrub" | "lotion" | "gel" | "butter" | "toner" | "set";
+
+export interface ProductFilterState {
+  searchQuery: string;
+  category: string;
+  productType: ProductType;
+  priceRange: [number, number];
+  inStockOnly: boolean;
+  freeDeliveryOnly: boolean;
+  minRating: number;
+  sortBy: "featured" | "price_asc" | "price_desc" | "rating" | "discount";
+}
 
 export interface Product {
   id: string | number;
   title: string;
   titleAr?: string;
   category?: ProductCategory;
+  productType?: ProductType;
   image: string;
   images?: string[]; // Multiple images array for product card/details carousel
   price: number; // Price in EGP

@@ -1,16 +1,11 @@
-import { FormattedMessage } from 'react-intl'
+import { WishlistEmptyState } from "@/features/wishlist";
 
 const WishlistPage = () => {
   return (
-    <section className="py-12">
-      <h1>
-        <FormattedMessage id="wishlist.title" />
-      </h1>
-      <p className="mt-3 text-tertiary">
-        <FormattedMessage id="wishlist.empty" />
-      </p>
+    <section className="flex min-h-[65vh] items-center justify-center py-12">
+      <WishlistEmptyState />
     </section>
-  )
-}
+  );
+};
 
-export default WishlistPage
+export default WishlistPage;

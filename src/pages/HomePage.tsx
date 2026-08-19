@@ -2,10 +2,10 @@ import { FormattedMessage } from 'react-intl'
 import {
   HomeBannerCarousel,
   HomeCategories,
-  HomePromoTicker,
   HomeBadgeGrids,
   HomeCategoryGrids,
 } from '@/features/home'
+import { HomeReviewsSection } from '@/features/reviews'
 
 export const HomePage = () => {
   return (
@@ -13,12 +13,14 @@ export const HomePage = () => {
       <h1 className="sr-only">
         <FormattedMessage id="brand.name" />
       </h1>
-      <HomePromoTicker />
       <HomeBannerCarousel />
       <HomeCategories />
       <HomeBadgeGrids />
       <HomeCategoryGrids />
+      <HomeReviewsSection />
     </>
   )
 }
+
+
 

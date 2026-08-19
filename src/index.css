@@ -217,7 +217,41 @@ code {
   background: var(--code-bg);
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+.animate-marquee {
+  animation: marquee var(--duration, 40s) linear infinite;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration, 40s) linear infinite;
+}
+
+.group:hover .animate-marquee,
+.group:hover .animate-marquee-vertical {
+  animation-play-state: paused;
+}
+
 @theme inline {
+  --animate-marquee: marquee var(--duration, 40s) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration, 40s) linear infinite;
+
   --font-heading: var(--font-sans);
   --font-ibm-plex-sans-arabic: "IBM Plex Sans Arabic", sans-serif;
   --font-sans: "IBM Plex Sans Arabic", "Geist Variable", sans-serif;

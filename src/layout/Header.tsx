@@ -5,6 +5,8 @@ import { Heart, HelpCircle, Home, ShoppingBag, Sparkles, Star, Tag } from 'lucid
 import { motion } from 'motion/react'
 import logo from '@/assets/logo.webp'
 import CardNav, { type CardNavItem } from '@/components/CardNav'
+import { DesktopHeader } from '@/layout/DesktopHeader'
+import { PromoTicker } from '@/layout/PromoTicker'
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@/i18n/locales'
 import type { MessageKey } from '@/i18n/messages/en'
 import { getLocalizedPath } from '@/i18n/navigation'
@@ -84,65 +86,85 @@ export const Header = () => {
   }, [intl, locale])
 
   return (
-    <motion.header
-      className="sticky top-0 z-50 w-full"
-      animate={{ y: hidden ? '-110%' : 0 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <CardNav
-        logo={logo}
-        logoAlt={brandName}
-        logoHref={getLocalizedPath('/', locale)}
-        items={items}
-        leading={<NavSearch />}
-        actions={<NavActions />}
-        openMenuLabel={intl.formatMessage({ id: 'nav.openMenu' })}
-        closeMenuLabel={intl.formatMessage({ id: 'nav.closeMenu' })}
-        onMenuOpenChange={(open) => {
-          setIsMenuOpen(open)
-          if (open) setHidden(false)
+    <header className="sticky top-0 z-50 w-full rounded-none">
+      <PromoTicker />
+      <motion.div
+        className="w-full rounded-none"
+        initial={false}
+        animate={{
+          y: hidden ? '-100%' : '0%',
         }}
-        mobileActions={(closeMenu) => (
-          <div className="flex w-full items-center gap-2 pt-0.5">
-            <Link
-              to={getLocalizedPath('/wishlist', locale)}
-              onClick={closeMenu}
-              viewTransition={true}
-              aria-label={intl.formatMessage({ id: 'nav.wishlist' })}
-              className="group relative flex flex-1 items-center justify-between overflow-hidden rounded-xl bg-gradient-to-br from-rose-500/15 via-rose-500/10 to-rose-500/5 p-2.5 text-rose-950 dark:text-rose-100 ring-1 ring-rose-500/20 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-300 shadow-xs transition-transform group-hover:scale-110">
-                  <Heart className="size-4 fill-rose-500/40 text-rose-600 dark:text-rose-300" />
-                </div>
-                <span className="text-sm font-semibold tracking-tight">
-                  {intl.formatMessage({ id: 'nav.wishlist' })}
-                </span>
-              </div>
-            </Link>
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          pointerEvents: hidden ? 'none' : 'auto',
+        }}
+      >
+        {/* Desktop Header (Large Screens: lg and up) */}
+        <div className="hidden lg:block">
+          <DesktopHeader />
+        </div>
 
-            <Link
-              to={getLocalizedPath('/cart', locale)}
-              onClick={closeMenu}
-              viewTransition={true}
-              aria-label={intl.formatMessage({ id: 'nav.cart' })}
-              className="group relative flex flex-1 items-center justify-between overflow-hidden rounded-xl bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 p-2.5 text-primary-950 dark:text-primary-100 ring-1 ring-primary/30 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-primary/30 text-primary-950 dark:text-primary-100 shadow-xs transition-transform group-hover:scale-110">
-                  <ShoppingBag className="size-4 text-primary-900 dark:text-primary-100" />
-                </div>
-                <span className="text-sm font-semibold tracking-tight">
-                  {intl.formatMessage({ id: 'nav.cart' })}
-                </span>
+        {/* Mobile/Tablet CardNav Header (Screens below lg) */}
+        <div className="block lg:hidden">
+          <CardNav
+            logo={logo}
+            logoAlt={brandName}
+            logoHref={getLocalizedPath('/', locale)}
+            items={items}
+            leading={<NavSearch />}
+            actions={<NavActions />}
+            openMenuLabel={intl.formatMessage({ id: 'nav.openMenu' })}
+            closeMenuLabel={intl.formatMessage({ id: 'nav.closeMenu' })}
+            onMenuOpenChange={(open) => {
+              setIsMenuOpen(open)
+              if (open) setHidden(false)
+            }}
+            mobileActions={(closeMenu) => (
+              <div className="flex w-full items-center gap-2 pt-0.5">
+                <Link
+                  to={getLocalizedPath('/wishlist', locale)}
+                  onClick={closeMenu}
+                  viewTransition={true}
+                  aria-label={intl.formatMessage({ id: 'nav.wishlist' })}
+                  className="group relative flex flex-1 items-center justify-between overflow-hidden rounded-xl bg-gradient-to-br from-rose-500/15 via-rose-500/10 to-rose-500/5 p-2.5 text-rose-950 dark:text-rose-100 ring-1 ring-rose-500/20 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-300 shadow-xs transition-transform group-hover:scale-110">
+                      <Heart className="size-4 fill-rose-500/40 text-rose-600 dark:text-rose-300" />
+                    </div>
+                    <span className="text-sm font-semibold tracking-tight">
+                      {intl.formatMessage({ id: 'nav.wishlist' })}
+                    </span>
+                  </div>
+                </Link>
+
+                <Link
+                  to={getLocalizedPath('/cart', locale)}
+                  onClick={closeMenu}
+                  viewTransition={true}
+                  aria-label={intl.formatMessage({ id: 'nav.cart' })}
+                  className="group relative flex flex-1 items-center justify-between overflow-hidden rounded-xl bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 p-2.5 text-primary-950 dark:text-primary-100 ring-1 ring-primary/30 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-primary/30 text-primary-950 dark:text-primary-100 shadow-xs transition-transform group-hover:scale-110">
+                      <ShoppingBag className="size-4 text-primary-900 dark:text-primary-100" />
+                    </div>
+                    <span className="text-sm font-semibold tracking-tight">
+                      {intl.formatMessage({ id: 'nav.cart' })}
+                    </span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-          </div>
-        )}
-      />
-    </motion.header>
+            )}
+          />
+        </div>
+      </motion.div>
+    </header>
   )
 }
+
+
+
 
 
 

@@ -200,7 +200,7 @@ const CardNav = ({
         ref={navRef}
         aria-label={logoAlt}
         className={cn(
-          'card-nav absolute top-0 inset-x-0 block h-[60px] overflow-hidden rounded-b-xl bg-card p-0 shadow-md ring-1 ring-primary-200 will-change-[height]',
+          'card-nav absolute top-0 inset-x-0 block h-[60px] overflow-hidden rounded-none bg-card p-0 shadow-md border-x border-b border-primary-200 will-change-[height]',
           isExpanded && 'open',
         )}
       >
@@ -208,7 +208,7 @@ const CardNav = ({
           <div className="flex h-full shrink-0 items-center gap-0.5 sm:gap-1">
             <motion.button
               type="button"
-              className="hamburger-menu flex h-full shrink-0 cursor-pointer flex-col items-center justify-center gap-[6px] text-secondary"
+              className="hamburger-menu flex size-9 shrink-0 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-lg text-secondary hover:bg-primary/70 hover:text-secondary"
               onClick={toggleMenu}
               onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -218,18 +218,18 @@ const CardNav = ({
               }}
               aria-label={isExpanded ? closeMenuLabel : openMenuLabel}
               aria-expanded={isExpanded}
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.94 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
             >
               <motion.span
-                className="hamburger-line h-[2px] w-[30px] origin-center bg-current"
-                animate={isHamburgerOpen ? { y: 4, rotate: 45 } : { y: 0, rotate: 0 }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                className="hamburger-line h-[2px] w-[20px] rounded-full origin-center bg-current"
+                animate={isHamburgerOpen ? { y: 3.5, rotate: 45 } : { y: 0, rotate: 0 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
               />
               <motion.span
-                className="hamburger-line h-[2px] w-[30px] origin-center bg-current"
-                animate={isHamburgerOpen ? { y: -4, rotate: -45 } : { y: 0, rotate: 0 }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                className="hamburger-line h-[2px] w-[20px] rounded-full origin-center bg-current"
+                animate={isHamburgerOpen ? { y: -3.5, rotate: -45 } : { y: 0, rotate: 0 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
               />
             </motion.button>
             {leading}

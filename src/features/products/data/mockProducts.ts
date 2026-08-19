@@ -5,6 +5,7 @@ export const mockProducts: Product[] = [
     id: "p1",
     title: "سيروم الهيالورونيك أسيد المركز لترطيب وتغذية البشرة العميق 30 مل",
     category: "skin_care",
+    productType: "serum",
     image:
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
     images: [
@@ -25,6 +26,7 @@ export const mockProducts: Product[] = [
     id: "p2",
     title: "سيروم سيرامي منظف مرطب للوجه والبشرة العادية إلى الجافة 473 مل",
     category: "skin_care",
+    productType: "cleanser",
     image:
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
     images: [
@@ -46,6 +48,7 @@ export const mockProducts: Product[] = [
     id: "p3",
     title: "واقي الشمس الفعال بحماية SPF50+ للتحكم بالإفرازات واللمعان 50 مل",
     category: "skin_care",
+    productType: "sunscreen",
     image:
       "https://images.unsplash.com/photo-1608248597261-e4d0947c6b1e?w=600&q=80",
     price: 980,
@@ -63,6 +66,7 @@ export const mockProducts: Product[] = [
     id: "p4",
     title: "زيت مغذي ومعالج للشعر بخلاصة الأرغان والجوجوبا لمعان فائق 100 مل",
     category: "body_care",
+    productType: "oil",
     image:
       "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&q=80",
     price: 540,
@@ -80,6 +84,7 @@ export const mockProducts: Product[] = [
     id: "p5",
     title: "كريم النياسيناميد والزنك المنقي لنضارة البشرة وتقليل المسام 50 مل",
     category: "skin_care",
+    productType: "cream",
     image:
       "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
     price: 420,
@@ -97,6 +102,7 @@ export const mockProducts: Product[] = [
     id: "p6",
     title: "ماء ميسيلار منقي ومزيل مكياج لطيف للبشرة الحساسة 500 مل",
     category: "skin_care",
+    productType: "cleanser",
     image:
       "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
     price: 580,
@@ -114,6 +120,7 @@ export const mockProducts: Product[] = [
     id: "p7",
     title: "مجموعة العناية الليلية المتكاملة لترطيب وإعادة حيوية البشرة",
     category: "skin_care",
+    productType: "set",
     image:
       "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&q=80",
     price: 1890,
@@ -131,6 +138,7 @@ export const mockProducts: Product[] = [
     id: "p8",
     title: "مغذي وزيت مرطب للجسم بعبير الفانيليا والشيا واللوز الحلو 250 مل",
     category: "body_care",
+    productType: "oil",
     image:
       "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80",
     price: 450,
@@ -148,6 +156,7 @@ export const mockProducts: Product[] = [
     id: "p9",
     title: "مقشر الجسم بالسكر الطبيعي وزيت الجوز العطري للتنعيم 350 جم",
     category: "body_care",
+    productType: "scrub",
     image:
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
     price: 380,
@@ -165,6 +174,7 @@ export const mockProducts: Product[] = [
     id: "p10",
     title: "لوشن الجسم الفاخر بتركيبة الهيالورونيك والزيوت المغذية 400 مل",
     category: "body_care",
+    productType: "lotion",
     image:
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
     price: 520,
@@ -180,6 +190,7 @@ export const mockProducts: Product[] = [
     id: "p11",
     title: "كريم الفيتامين سي المكثف لإشراقة وتفتيح البشرة 50 مل",
     category: "skin_care",
+    productType: "cream",
     image:
       "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
     price: 790,
@@ -197,6 +208,7 @@ export const mockProducts: Product[] = [
     id: "p12",
     title: "جل الاستحمام المنعش برائحة اللافندر والنعناع الطبيعي 500 مل",
     category: "body_care",
+    productType: "gel",
     image:
       "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
     price: 290,
@@ -212,6 +224,7 @@ export const mockProducts: Product[] = [
     id: "p13",
     title: "زبدة الجسم الغنية بفلتر الحماية وزبدة الكاكاو 200 مل",
     category: "body_care",
+    productType: "butter",
     image:
       "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&q=80",
     price: 360,
@@ -229,6 +242,7 @@ export const mockProducts: Product[] = [
     id: "p14",
     title: "تونر الريتينول المجدد لخلايا الوجه ومحارب التجاعيد 200 مل",
     category: "skin_care",
+    productType: "toner",
     image:
       "https://images.unsplash.com/photo-1608248597261-e4d0947c6b1e?w=600&q=80",
     price: 840,
@@ -241,3 +255,4 @@ export const mockProducts: Product[] = [
     inStock: true,
   },
 ];
+

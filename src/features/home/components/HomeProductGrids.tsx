@@ -18,7 +18,9 @@ interface ProductCarouselSectionProps {
   viewAllHref: string;
 }
 
-export const ProductCarouselCardSection: React.FC<ProductCarouselSectionProps> = ({
+export const ProductCarouselCardSection: React.FC<
+  ProductCarouselSectionProps
+> = ({
   title,
   subtitle,
   badgeLabel,
@@ -53,8 +55,12 @@ export const ProductCarouselCardSection: React.FC<ProductCarouselSectionProps> =
     if (isRtl) {
       // In RTL layout:
       // Content start is at far RIGHT. Content end is at far LEFT.
-      const isAtRightEdge = absScroll < 5 || (scrollLeft > 0 && Math.abs(scrollLeft - maxScroll) < 5);
-      const isAtLeftEdge = Math.abs(absScroll - maxScroll) < 5 || (scrollLeft < 0 && Math.abs(absScroll - maxScroll) < 5);
+      const isAtRightEdge =
+        absScroll < 5 ||
+        (scrollLeft > 0 && Math.abs(scrollLeft - maxScroll) < 5);
+      const isAtLeftEdge =
+        Math.abs(absScroll - maxScroll) < 5 ||
+        (scrollLeft < 0 && Math.abs(absScroll - maxScroll) < 5);
 
       setCanScrollRight(!isAtRightEdge);
       setCanScrollLeft(!isAtLeftEdge);
@@ -111,7 +117,7 @@ export const ProductCarouselCardSection: React.FC<ProductCarouselSectionProps> =
     <div
       className={cn(
         "relative rounded-3xl p-5 md:p-6 border shadow-xs transition-all flex flex-col justify-between overflow-hidden",
-        cardBg
+        cardBg,
       )}
     >
       {/* Top Section Header */}
@@ -121,7 +127,7 @@ export const ProductCarouselCardSection: React.FC<ProductCarouselSectionProps> =
             <span
               className={cn(
                 "inline-flex items-center gap-1.5 text-xs font-bold px-3 py-0.5 rounded-full border shadow-2xs mb-1",
-                badgeBg
+                badgeBg,
               )}
             >
               {badgeLabel}
@@ -197,7 +203,7 @@ export const ProductCarouselCardSection: React.FC<ProductCarouselSectionProps> =
         {/* Scrollable Products Carousel with Snap Centering on Small Screens */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-3.5 md:gap-4 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-mandatory sm:snap-none py-2 px-1 -mx-1 select-none"
+          className="flex gap-3.5 md:gap-4 overflow-x-auto overflow-y-clip scroll-smooth scrollbar-none snap-x snap-mandatory sm:snap-none py-2 px-1 -mx-1 select-none touch-pan-x"
         >
           {products.map((product) => (
             <motion.div
@@ -227,11 +233,11 @@ export const HomeBadgeGrids: React.FC = () => {
 
   const bestOfUsProducts = mockProducts.filter((p) => p.badge === "best_of_us");
   const mostOrderedProducts = mockProducts.filter(
-    (p) => p.badge === "most_ordered"
+    (p) => p.badge === "most_ordered",
   );
   const discountProducts = mockProducts.filter(
     (p) =>
-      p.badge === "discount" || (p.discountPercent && p.discountPercent > 0)
+      p.badge === "discount" || (p.discountPercent && p.discountPercent > 0),
   );
   const newProducts = mockProducts.filter((p) => p.badge === "new");
 
@@ -301,10 +307,10 @@ export const HomeCategoryGrids: React.FC = () => {
   const intl = useIntl();
 
   const skinCareProducts = mockProducts.filter(
-    (p) => p.category === "skin_care"
+    (p) => p.category === "skin_care",
   );
   const bodyCareProducts = mockProducts.filter(
-    (p) => p.category === "body_care"
+    (p) => p.category === "body_care",
   );
 
   return (

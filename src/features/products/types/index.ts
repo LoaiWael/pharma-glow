@@ -1,1 +1,7 @@
-export type { Product, ProductCardProps } from './product'
+export type {
+  Product,
+  ProductCardProps,
+  ProductCategory,
+  ProductType,
+  ProductFilterState,
+} from './product'

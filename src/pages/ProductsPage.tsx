@@ -1,17 +1,90 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "motion/react";
-import { Filter, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Sparkles, SlidersHorizontal } from "lucide-react";
 import { FormattedMessage } from "react-intl";
-import { mockProducts, ProductCard } from "@/features/products";
-import type { Product } from "@/features/products/types";
+import {
+  useProducts,
+  ProductCard,
+  ProductFilters,
+  type Product,
+  type ProductType,
+} from "@/features/products";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AnimationContainer,
+  AnimationItem,
+  PageFadeIn,
+} from "@/components/AnimationContainer";
+import {
+  itemScaleVariants,
+  itemProductCardVariants,
+} from "@/lib/animation-variants";
+
 
 export const ProductsPage: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeFilter = searchParams.get("filter") || "all";
-  const searchQuery = searchParams.get("q") || "";
+
+  // Support filter, badge, or category params seamlessly from URL
+  const filterParam = searchParams.get("filter");
+  const badgeParam = searchParams.get("badge");
+  const categoryParam = searchParams.get("category");
+  const urlSearchQuery = searchParams.get("q") || "";
+  const urlType = (searchParams.get("type") as ProductType) || "all";
+  const urlMinPrice = searchParams.get("minPrice")
+    ? Number(searchParams.get("minPrice"))
+    : 0;
+  const urlMaxPrice = searchParams.get("maxPrice")
+    ? Number(searchParams.get("maxPrice"))
+    : 2500;
+  const urlMinRating = searchParams.get("minRating")
+    ? Number(searchParams.get("minRating"))
+    : 0;
+  const urlSortBy =
+    (searchParams.get("sortBy") as
+      | "featured"
+      | "price_asc"
+      | "price_desc"
+      | "rating"
+      | "discount") || "featured";
+
+  // Resolved active category / image filter state
+  const activeFilter = filterParam || badgeParam || categoryParam || "all";
   const [addedItemName, setAddedItemName] = useState<string | null>(null);
+
+  // Local state initialized / synced with URL
+  const [searchQuery, setSearchQuery] = useState<string>(urlSearchQuery);
+  const [selectedType, setSelectedType] = useState<ProductType>(urlType);
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    urlMinPrice,
+    urlMaxPrice,
+  ]);
+  const [minRating, setMinRating] = useState<number>(urlMinRating);
+  const [sortBy, setSortBy] = useState<
+    "featured" | "price_asc" | "price_desc" | "rating" | "discount"
+  >(urlSortBy);
+
+  // Keep state in sync with URL searchParams changes
+  React.useEffect(() => {
+    setSearchQuery(urlSearchQuery);
+    setSelectedType(urlType);
+    setPriceRange([urlMinPrice, urlMaxPrice]);
+    setMinRating(urlMinRating);
+    setSortBy(urlSortBy);
+  }, [
+    urlSearchQuery,
+    urlType,
+    urlMinPrice,
+    urlMaxPrice,
+    urlMinRating,
+    urlSortBy,
+  ]);
 
   const filterOptions = [
     {
@@ -44,12 +117,42 @@ export const ProductsPage: React.FC = () => {
       image:
         "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=300&q=80",
     },
+    {
+      id: "skin_care",
+      labelId: "category.skincare.title",
+      image:
+        "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&q=80",
+    },
+    {
+      id: "body_care",
+      labelId: "category.bodycare.title",
+      image:
+        "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=300&q=80",
+    },
   ];
+
+  const updateParam = (key: string, value: string | null) => {
+    setSearchParams(
+      (prev) => {
+        const newParams = new URLSearchParams(prev);
+        if (!value || value === "" || value === "all" || value === "0") {
+          newParams.delete(key);
+        } else {
+          newParams.set(key, value);
+        }
+        return newParams;
+      },
+      { replace: true },
+    );
+  };
 
   const handleFilterChange = (filterId: string) => {
     setSearchParams(
       (prev) => {
         const newParams = new URLSearchParams(prev);
+        newParams.delete("badge");
+        newParams.delete("category");
+
         if (filterId === "all") {
           newParams.delete("filter");
         } else {
@@ -61,39 +164,74 @@ export const ProductsPage: React.FC = () => {
     );
   };
 
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    updateParam("q", val);
+  };
+
+  const handleTypeChange = (type: ProductType) => {
+    setSelectedType(type);
+    updateParam("type", type === "all" ? null : type);
+  };
+
+  const handlePriceRangeChange = (range: [number, number]) => {
+    setPriceRange(range);
+    setSearchParams(
+      (prev) => {
+        const newParams = new URLSearchParams(prev);
+        if (range[0] > 0) newParams.set("minPrice", range[0].toString());
+        else newParams.delete("minPrice");
+
+        if (range[1] < 2500) newParams.set("maxPrice", range[1].toString());
+        else newParams.delete("maxPrice");
+        return newParams;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleMinRatingChange = (rating: number) => {
+    setMinRating(rating);
+    updateParam("minRating", rating > 0 ? rating.toString() : null);
+  };
+
+  const handleSortByChange = (
+    sort: "featured" | "price_asc" | "price_desc" | "rating" | "discount",
+  ) => {
+    setSortBy(sort);
+    updateParam("sortBy", sort === "featured" ? null : sort);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery("");
+    setSelectedType("all");
+    setPriceRange([0, 2500]);
+    setMinRating(0);
+    setSortBy("featured");
+    setSearchParams({}, { replace: true });
+  };
+
+  const hasActiveFilters =
+    activeFilter !== "all" ||
+    searchQuery.trim() !== "" ||
+    selectedType !== "all" ||
+    priceRange[0] > 0 ||
+    priceRange[1] < 2500 ||
+    minRating > 0 ||
+    sortBy !== "featured";
+
   const handleAddToCart = (product: Partial<Product>) => {
     setAddedItemName(product.title || "المنتج");
     setTimeout(() => setAddedItemName(null), 2500);
   };
 
-  const handleToggleFavorite = (id: string | number, isFav: boolean) => {
-    setProducts((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isFavorite: isFav } : item,
-      ),
-    );
-  };
-
-  const filteredProducts = products.filter((product) => {
-    // Search query filter
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    // Category badge filter
-    if (activeFilter === "all") return matchesSearch;
-    if (activeFilter === "best_of_us")
-      return matchesSearch && product.badge === "best_of_us";
-    if (activeFilter === "most_ordered")
-      return matchesSearch && product.badge === "most_ordered";
-    if (activeFilter === "discount")
-      return (
-        matchesSearch &&
-        (product.badge === "discount" || (product.discountPercent ?? 0) > 0)
-      );
-    if (activeFilter === "new") return matchesSearch && product.badge === "new";
-
-    return matchesSearch && product.badge === activeFilter;
+  const { data: filteredProducts = [] } = useProducts({
+    searchQuery,
+    activeFilter,
+    productType: selectedType,
+    priceRange,
+    minRating,
+    sortBy,
   });
 
   return (
@@ -103,133 +241,259 @@ export const ProductsPage: React.FC = () => {
     >
       <div className="page-shell mx-auto space-y-8">
         {/* Toast Alert for Cart addition */}
-        {addedItemName && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold"
-          >
-            <Sparkles className="w-4 h-4 text-yellow-400" />
-            <span>
-              <FormattedMessage
-                id="products.addedSuccess"
-                values={{ name: addedItemName }}
-              />
-            </span>
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {addedItemName && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold"
+            >
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              <span>
+                <FormattedMessage
+                  id="products.addedSuccess"
+                  values={{ name: addedItemName }}
+                />
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Page Header Banner */}
-        <div
+        <PageFadeIn
+          yOffset={14}
+          duration={0.45}
           className="relative overflow-hidden rounded-3xl p-8 md:p-12 shadow-lg min-h-[220px] flex items-center bg-cover bg-center text-white"
           style={{
             backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.45)), url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&q=80')`,
           }}
         >
-          <div className="space-y-3 text-right max-w-2xl z-10">
-            <div className="inline-flex items-center gap-2 text-rose-300 font-bold text-xs uppercase tracking-wider bg-rose-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-rose-500/20">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.1, ease: "easeOut" }}
+            className="space-y-3 text-right max-w-2xl z-10"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35, delay: 0.15 }}
+              className="inline-flex items-center gap-2 text-rose-300 font-bold text-xs uppercase tracking-wider bg-rose-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-rose-500/20"
+            >
               <Sparkles className="w-3.5 h-3.5 text-rose-400" />
               <span>
                 <FormattedMessage id="products.banner.badge" />
               </span>
-            </div>
+            </motion.div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-xs text-white">
               <FormattedMessage id="products.banner.title" />
             </h1>
             <p className="text-gray-200 text-sm md:text-base leading-relaxed max-w-xl">
               <FormattedMessage id="products.banner.description" />
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </PageFadeIn>
 
         {/* Cool Image-based Centered Filters Bar */}
-        <div className="flex flex-col items-center gap-6 py-4 w-full overflow-hidden">
-          <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 md:gap-10 lg:gap-12 overflow-x-auto w-full max-w-full px-6 py-4 scrollbar-none">
+        <div className="flex flex-col items-center gap-6 py-2 w-full overflow-hidden">
+          <AnimationContainer
+            staggerChildren={0.05}
+            delayChildren={0.15}
+            className="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 md:gap-10 lg:gap-12 overflow-x-auto w-full max-w-full px-6 py-4 scrollbar-none"
+          >
             {filterOptions.map((option) => {
               const isActive = activeFilter === option.id;
               return (
-                <button
-                  key={option.id}
-                  onClick={() => handleFilterChange(option.id)}
-                  className="group flex flex-col items-center gap-3 transition-all duration-300 cursor-pointer focus:outline-hidden shrink-0"
-                >
-                  <div
-                    className={`relative w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36 rounded-full p-1.5 transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 ring-4 ring-rose-500/25 scale-105 shadow-2xl"
-                        : "bg-gray-200 dark:bg-neutral-800 hover:scale-105 hover:shadow-lg"
-                    }`}
+                <AnimationItem key={option.id} variants={itemScaleVariants}>
+                  <motion.button
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleFilterChange(option.id)}
+                    className="group flex flex-col items-center gap-3 transition-all duration-300 cursor-pointer focus:outline-hidden shrink-0"
                   >
-                    <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-neutral-900 bg-white dark:bg-neutral-900 shadow-inner">
-                      <img
-                        src={option.image}
-                        alt={option.id}
-                        className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-115 ${
-                          isActive
-                            ? "brightness-105"
-                            : "brightness-95 group-hover:brightness-100"
-                        }`}
-                      />
-                      <div
-                        className={`absolute inset-0 transition-opacity duration-300 ${
-                          isActive
-                            ? "bg-rose-500/10"
-                            : "bg-black/10 group-hover:bg-transparent"
-                        }`}
-                      />
+                    <div
+                      className={`relative w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36 rounded-full p-1.5 transition-all duration-300 ${
+                        isActive
+                          ? "bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 ring-4 ring-rose-500/25 scale-105 shadow-2xl"
+                          : "bg-gray-200 dark:bg-neutral-800 hover:scale-105 hover:shadow-lg"
+                      }`}
+                    >
+                      <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-neutral-900 bg-white dark:bg-neutral-900 shadow-inner">
+                        <img
+                          src={option.image}
+                          alt={option.id}
+                          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-115 ${
+                            isActive
+                              ? "brightness-105"
+                              : "brightness-95 group-hover:brightness-100"
+                          }`}
+                        />
+                        <div
+                          className={`absolute inset-0 transition-opacity duration-300 ${
+                            isActive
+                              ? "bg-rose-500/10"
+                              : "bg-black/10 group-hover:bg-transparent"
+                          }`}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <span
-                    className={`text-sm md:text-base font-bold tracking-tight text-center transition-colors duration-200 ${
-                      isActive
-                        ? "text-rose-600 dark:text-rose-400"
-                        : "text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white"
-                    }`}
-                  >
-                    <FormattedMessage id={option.labelId} />
-                  </span>
-                </button>
+                    <span
+                      className={`text-sm md:text-base font-bold tracking-tight text-center transition-colors duration-200 ${
+                        isActive
+                          ? "text-rose-600 dark:text-rose-400"
+                          : "text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white"
+                      }`}
+                    >
+                      <FormattedMessage id={option.labelId} />
+                    </span>
+                  </motion.button>
+                </AnimationItem>
               );
             })}
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-white dark:bg-neutral-900 px-4 py-1.5 rounded-full border border-gray-200/80 dark:border-neutral-800 shadow-xs">
-            <Filter className="w-3.5 h-3.5 text-rose-500" />
-            <FormattedMessage
-              id="products.count"
-              values={{ count: filteredProducts.length }}
-            />
-          </div>
+          </AnimationContainer>
         </div>
 
-        {/* Product Cards Grid */}
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleFavorite={handleToggleFavorite}
+        {/* Mobile Filter Button and Active Filter Count Bar */}
+        <div className="flex lg:hidden items-center justify-between gap-3 bg-white dark:bg-neutral-900 p-3.5 rounded-2xl border border-gray-200/80 dark:border-neutral-800 shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300">
+            <span className="font-bold text-gray-900 dark:text-white">
+              <FormattedMessage
+                id="products.count"
+                values={{ count: filteredProducts.length }}
               />
-            ))}
+            </span>
+            {hasActiveFilters && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary text-white">
+                مفعل
+              </span>
+            )}
           </div>
-        ) : (
-          <div className="text-center py-16 bg-white dark:bg-neutral-900 rounded-3xl border border-gray-200/80 dark:border-neutral-800 space-y-3">
-            <p className="text-gray-500 dark:text-gray-400 text-base font-semibold">
-              <FormattedMessage id="products.empty" />
-            </p>
-            <button
-              onClick={() => {
-                setSearchParams({}, { replace: true });
-              }}
-              className="text-xs font-bold text-secondary underline hover:text-primary transition-colors"
+
+          <Dialog>
+            <DialogTrigger
+              render={
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold shadow-sm shadow-secondary/25 hover:bg-secondary-600 transition-all cursor-pointer"
+                />
+              }
             >
-              <FormattedMessage id="products.resetFilters" />
-            </button>
+              <SlidersHorizontal className="w-4 h-4" />
+              <FormattedMessage id="products.filters.openButton" />
+              {hasActiveFilters && (
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              )}
+            </DialogTrigger>
+
+            <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-gray-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-right">
+              <DialogHeader className="mb-2">
+                <DialogTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <SlidersHorizontal className="w-5 h-5 text-secondary" />
+                  <FormattedMessage id="products.filters.title" />
+                </DialogTitle>
+              </DialogHeader>
+
+              <ProductFilters
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
+                selectedType={selectedType}
+                onTypeChange={handleTypeChange}
+                priceRange={priceRange}
+                onPriceRangeChange={handlePriceRangeChange}
+                minPossiblePrice={0}
+                maxPossiblePrice={2500}
+                minRating={minRating}
+                onMinRatingChange={handleMinRatingChange}
+                sortBy={sortBy}
+                onSortByChange={handleSortByChange}
+                onResetFilters={handleResetFilters}
+                hasActiveFilters={hasActiveFilters}
+                totalFilteredCount={filteredProducts.length}
+                isSidebar={false}
+                className="border-0 shadow-none bg-transparent dark:bg-transparent p-0"
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Main Content Layout: Sidebar on Desktop (lg+), Grid on Right */}
+        <div className="flex flex-col lg:flex-row items-start gap-8">
+          {/* Desktop Filters Sidebar */}
+          <aside className="hidden lg:block w-80 shrink-0">
+            <PageFadeIn delay={0.2} yOffset={10}>
+              <ProductFilters
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
+                selectedType={selectedType}
+                onTypeChange={handleTypeChange}
+                priceRange={priceRange}
+                onPriceRangeChange={handlePriceRangeChange}
+                minPossiblePrice={0}
+                maxPossiblePrice={2500}
+                minRating={minRating}
+                onMinRatingChange={handleMinRatingChange}
+                sortBy={sortBy}
+                onSortByChange={handleSortByChange}
+                onResetFilters={handleResetFilters}
+                hasActiveFilters={hasActiveFilters}
+                totalFilteredCount={filteredProducts.length}
+                isSidebar={true}
+              />
+            </PageFadeIn>
+          </aside>
+
+          {/* Products Grid Content Area */}
+          <div className="flex-1 w-full min-w-0">
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.length > 0 ? (
+                <motion.div
+                  layout
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 justify-items-center"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {filteredProducts.map((product) => (
+                      <motion.div
+                        key={product.id}
+                        layout
+                        variants={itemProductCardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="w-full h-full flex justify-center"
+                      >
+                        <ProductCard
+                          product={product}
+                          onAddToCart={handleAddToCart}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="empty-state"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center py-16 bg-white dark:bg-neutral-900 rounded-3xl border border-gray-200/80 dark:border-neutral-800 space-y-3 w-full"
+                >
+                  <p className="text-gray-500 dark:text-gray-400 text-base font-semibold">
+                    <FormattedMessage id="products.empty" />
+                  </p>
+                  <button
+                    onClick={handleResetFilters}
+                    className="text-xs font-bold text-secondary underline hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <FormattedMessage id="products.resetFilters" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
