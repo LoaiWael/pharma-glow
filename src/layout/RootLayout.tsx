@@ -20,11 +20,13 @@ export const RootLayout = ({ forcedLocale }: RootLayoutProps) => {
 
   return (
     <IntlProvider defaultLocale={DEFAULT_LOCALE} locale={activeLocale} messages={getMessages(activeLocale)}>
-      <div className="flex min-h-svh flex-col bg-background text-foreground">
-        <Header />
-        <main className="flex-1">
-          <Outlet />
-        </main>
+      <div className="flex min-h-svh flex-col overflow-x-clip bg-background text-foreground">
+        <div className="page-shell flex min-h-svh flex-col">
+          <Header />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </IntlProvider>
   )

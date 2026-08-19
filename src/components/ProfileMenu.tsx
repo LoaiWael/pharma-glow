@@ -44,11 +44,11 @@ export const ProfileMenu = () => {
       </motion.span>
       <DropdownMenuContent align="end" className="min-w-52 w-52">
         <DropdownMenuGroup>
-          <DropdownMenuItem render={<Link to={accountPath} />}>
+          <DropdownMenuItem render={<Link to={accountPath} viewTransition={true} />}>
             <BadgeCheckIcon />
             {intl.formatMessage({ id: 'nav.account' })}
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link to={ordersPath} />}>
+          <DropdownMenuItem render={<Link to={ordersPath} viewTransition={true} />}>
             <PackageIcon />
             {intl.formatMessage({ id: 'nav.orders' })}
           </DropdownMenuItem>

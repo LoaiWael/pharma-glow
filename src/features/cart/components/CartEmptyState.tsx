@@ -102,7 +102,7 @@ export const CartEmptyState = ({ onContinueShopping }: CartEmptyStateProps) => {
       <p className="mt-5 text-xs font-medium tracking-[0.22em] text-secondary uppercase">
         {intl.formatMessage({ id: 'cart.emptyKicker' })}
       </p>
-      <h3 className="mt-2 max-w-[16rem] text-xl font-medium text-balance text-secondary">
+      <h3 className="mt-2 max-w-[16rem] text-xl font-medium text-balance">
         {intl.formatMessage({ id: 'cart.emptyHeadline' })}
       </h3>
       <p className="mt-2 max-w-[18rem] text-sm leading-relaxed text-tertiary">
@@ -113,6 +113,7 @@ export const CartEmptyState = ({ onContinueShopping }: CartEmptyStateProps) => {
         <Link
           to={productsPath}
           onClick={onContinueShopping}
+          viewTransition={true}
           className={cn(
             buttonVariants({ variant: 'secondary', size: 'lg' }),
             'h-11 w-full rounded-xl',

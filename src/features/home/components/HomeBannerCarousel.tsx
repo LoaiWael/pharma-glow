@@ -15,7 +15,6 @@ import { getLocalizedPath } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { useHomeBanners } from '../api/use-home-banners'
 
-const BANNER_SHELL = 'mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'
 const BANNER_HEIGHT = 'h-[280px] sm:h-[360px] md:h-[440px] lg:h-[500px]'
 
 export const HomeBannerCarousel = () => {
@@ -49,9 +48,7 @@ export const HomeBannerCarousel = () => {
   if (isPending) {
     return (
       <section className="w-full pt-4">
-        <div className={BANNER_SHELL}>
-          <div className={cn(BANNER_HEIGHT, 'rounded-2xl bg-primary-100')} />
-        </div>
+        <div className={cn(BANNER_HEIGHT, 'rounded-2xl bg-primary-100')} />
       </section>
     )
   }
@@ -62,8 +59,7 @@ export const HomeBannerCarousel = () => {
 
   return (
     <section aria-label={intl.formatMessage({ id: 'brand.name' })} className="w-full pt-4">
-      <div className={BANNER_SHELL}>
-        <Carousel
+      <Carousel
           key={direction}
           className="overflow-hidden rounded-2xl"
           dir={direction}
@@ -102,6 +98,7 @@ export const HomeBannerCarousel = () => {
                         <Link
                           className={cn(buttonVariants({ variant: 'secondary', size: 'lg' }), 'h-10 px-5')}
                           to={getLocalizedPath(banner.href, locale)}
+                          viewTransition={true}
                         >
                           <FormattedMessage id={banner.ctaKey} />
                         </Link>
@@ -134,7 +131,6 @@ export const HomeBannerCarousel = () => {
             ))}
           </motion.div>
         </Carousel>
-      </div>
     </section>
   )
 }

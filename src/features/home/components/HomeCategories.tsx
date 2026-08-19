@@ -76,7 +76,7 @@ export const HomeCategories = () => {
 
   if (isPending) {
     return (
-      <section className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+      <section className="py-5">
         <div className="flex justify-center gap-6 overflow-hidden sm:gap-8">
           {Array.from({ length: 8 }).map((_, index) => (
             <div className="flex w-20 shrink-0 flex-col items-center gap-2" key={index}>
@@ -96,7 +96,7 @@ export const HomeCategories = () => {
   return (
     <section
       aria-label={intl.formatMessage({ id: 'home.categories.title' })}
-      className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8"
+      className="py-5"
     >
       <h2 className="sr-only">
         <FormattedMessage id="home.categories.title" />
@@ -125,6 +125,7 @@ export const HomeCategories = () => {
                 className="flex flex-col items-center"
                 draggable={false}
                 to={getLocalizedPath(category.href, locale)}
+                viewTransition={true}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.96 }}
               >

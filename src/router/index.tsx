@@ -4,6 +4,7 @@ import AccountPage from '@/pages/AccountPage'
 import BodyCarePage from '@/pages/BodyCarePage'
 import CartPage from '@/pages/CartPage'
 import { HomePage } from '@/pages/HomePage'
+import HowToOrderPage from '@/pages/HowToOrderPage'
 import OffersPage from '@/pages/OffersPage'
 import OrdersPage from '@/pages/OrdersPage'
 import ProductDetailsPage from '@/pages/ProductDetailsPage'
@@ -20,6 +21,7 @@ const localeChildren = [
   { path: 'skincare', element: <SkinCarePage /> },
   { path: 'bodycare', element: <BodyCarePage /> },
   { path: 'reviews', element: <ReviewsPage /> },
+  { path: 'how-to-order', element: <HowToOrderPage /> },
   { path: 'wishlist', element: <WishlistPage /> },
   { path: 'cart', element: <CartPage /> },
   { path: 'account', element: <AccountPage /> },

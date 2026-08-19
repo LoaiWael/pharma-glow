@@ -10,9 +10,9 @@ export const CartView = () => {
   const isEmpty = items.length === 0
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="py-12">
       <header className="text-center sm:text-start">
-        <h1 className="text-3xl font-medium text-secondary">
+        <h1 className="text-3xl font-medium">
           {intl.formatMessage({ id: 'cart.title' })}
         </h1>
         <p className="mt-2 text-tertiary">

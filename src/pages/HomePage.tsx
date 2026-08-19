@@ -1,5 +1,11 @@
 import { FormattedMessage } from 'react-intl'
-import { HomeBannerCarousel, HomeCategories } from '@/features/home'
+import {
+  HomeBannerCarousel,
+  HomeCategories,
+  HomePromoTicker,
+  HomeBadgeGrids,
+  HomeCategoryGrids,
+} from '@/features/home'
 
 export const HomePage = () => {
   return (
@@ -7,8 +13,12 @@ export const HomePage = () => {
       <h1 className="sr-only">
         <FormattedMessage id="brand.name" />
       </h1>
+      <HomePromoTicker />
       <HomeBannerCarousel />
       <HomeCategories />
+      <HomeBadgeGrids />
+      <HomeCategoryGrids />
     </>
   )
 }
+

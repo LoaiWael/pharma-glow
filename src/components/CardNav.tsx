@@ -5,10 +5,11 @@ import { GoArrowUpRight } from 'react-icons/go'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
-type CardNavLink = {
+export type CardNavLink = {
   label: string
   href: string
   ariaLabel: string
+  icon?: ReactNode
 }
 
 export type CardNavItem = {
@@ -29,6 +30,8 @@ export interface CardNavProps {
   actions?: ReactNode
   openMenuLabel?: string
   closeMenuLabel?: string
+  onMenuOpenChange?: (open: boolean) => void
+  mobileActions?: ReactNode | ((closeMenu: () => void) => ReactNode)
 }
 
 const defaultCardClasses = [
@@ -49,6 +52,8 @@ const CardNav = ({
   actions,
   openMenuLabel = 'Open menu',
   closeMenuLabel = 'Close menu',
+  onMenuOpenChange,
+  mobileActions,
 }: CardNavProps) => {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -167,6 +172,7 @@ const CardNav = ({
     const tl = tlRef.current
     if (!tl || !isExpanded) return
     setIsHamburgerOpen(false)
+    onMenuOpenChange?.(false)
     tl.eventCallback('onReverseComplete', () => setIsExpanded(false))
     tl.reverse()
   }
@@ -177,6 +183,7 @@ const CardNav = ({
     if (!isExpanded) {
       setIsHamburgerOpen(true)
       setIsExpanded(true)
+      onMenuOpenChange?.(true)
       tl.play(0)
     } else {
       closeMenu()
@@ -188,12 +195,12 @@ const CardNav = ({
   }
 
   return (
-    <div className={cn('card-nav-container relative z-40 w-full', className)}>
+    <div className={cn('card-nav-container relative z-40 h-[60px] w-full', className)}>
       <nav
         ref={navRef}
         aria-label={logoAlt}
         className={cn(
-          'card-nav relative block h-[60px] overflow-hidden rounded-b-xl bg-card p-0 shadow-md ring-1 ring-primary-200 will-change-[height]',
+          'card-nav absolute top-0 inset-x-0 block h-[60px] overflow-hidden rounded-b-xl bg-card p-0 shadow-md ring-1 ring-primary-200 will-change-[height]',
           isExpanded && 'open',
         )}
       >
@@ -234,6 +241,7 @@ const CardNav = ({
               className="flex min-w-0 items-center gap-2 no-underline"
               aria-label={logoAlt}
               onClick={closeMenu}
+              viewTransition={true}
             >
               <img
                 src={logo}
@@ -280,16 +288,23 @@ const CardNav = ({
                     to={link.href}
                     aria-label={link.ariaLabel}
                     onClick={closeMenu}
+                    viewTransition={true}
                   >
                     <motion.span
                       className="inline-flex items-center gap-1.5"
                       whileHover={{ opacity: 0.75, x: 2 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <GoArrowUpRight
-                        className="nav-card-link-icon shrink-0 rtl:-scale-x-100"
-                        aria-hidden="true"
-                      />
+                      {link.icon ? (
+                        <span className="nav-card-link-icon shrink-0" aria-hidden="true">
+                          {link.icon}
+                        </span>
+                      ) : (
+                        <GoArrowUpRight
+                          className="nav-card-link-icon shrink-0 rtl:-scale-x-100"
+                          aria-hidden="true"
+                        />
+                      )}
                       {link.label}
                     </motion.span>
                   </Link>
@@ -297,6 +312,15 @@ const CardNav = ({
               </div>
             </div>
           ))}
+
+          {mobileActions && (
+            <div
+              className="w-full shrink-0 pt-1 md:hidden"
+              ref={setCardRef((items || []).slice(0, 3).length)}
+            >
+              {typeof mobileActions === 'function' ? mobileActions(closeMenu) : mobileActions}
+            </div>
+          )}
         </div>
       </nav>
     </div>
