@@ -238,8 +238,8 @@ export const HomeBadgeGrids: React.FC = () => {
   return (
     <section className="py-6 md:py-10">
       <div className="container mx-auto px-4 md:px-6">
-        {/* 2 Columns Grid Layout on Large Screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Single Column Layout across all screen sizes */}
+        <div className="grid grid-cols-1 gap-6 md:gap-8">
           {/* Best of Us */}
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.bestOfUs" />}
@@ -310,8 +310,8 @@ export const HomeCategoryGrids: React.FC = () => {
   return (
     <section className="py-6 md:py-10">
       <div className="container mx-auto px-4 md:px-6">
-        {/* 2 Columns Grid Layout on Large Screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Single Column Layout across all screen sizes */}
+        <div className="grid grid-cols-1 gap-6 md:gap-8">
           {/* Skin Care Category Grid Cell */}
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="category.skincare.title" />}
