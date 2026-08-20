@@ -146,6 +146,16 @@ const fetchProducts = async (filters: ProductFiltersParams = {}): Promise<Produc
   return filterAndSortProducts(mockProducts, filters)
 }
 
+const fetchProductById = async (id: string | number): Promise<Product | undefined> => {
+  const cleanId = String(id).toLowerCase().trim()
+  return mockProducts.find((p) => String(p.id).toLowerCase() === cleanId) || mockProducts[0]
+}
+
+const fetchRelatedProducts = async (productId: string | number, category?: string): Promise<Product[]> => {
+  const cleanId = String(productId).toLowerCase().trim()
+  return mockProducts.filter((p) => String(p.id).toLowerCase() !== cleanId && (!category || p.category === category)).slice(0, 8)
+}
+
 const calculateProductFilterMeta = (products: Product[]): ProductFilterMeta => {
   const typeCounts: Record<ProductType | 'all', number> = {
     all: products.length,
@@ -199,6 +209,19 @@ export const useProducts = (filters: ProductFiltersParams = {}) =>
     queryKey: productKeys.list(filters),
     queryFn: () => fetchProducts(filters),
     placeholderData: (previousData) => previousData,
+  })
+
+export const useProduct = (id?: string | number) =>
+  useQuery({
+    queryKey: productKeys.detail(id ?? 'p1'),
+    queryFn: () => fetchProductById(id ?? 'p1'),
+    enabled: Boolean(id),
+  })
+
+export const useRelatedProducts = (productId: string | number, category?: string) =>
+  useQuery({
+    queryKey: [...productKeys.all, 'related', productId, category] as const,
+    queryFn: () => fetchRelatedProducts(productId, category),
   })
 
 export const useProductFilterMeta = () =>

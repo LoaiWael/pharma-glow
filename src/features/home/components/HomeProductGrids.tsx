@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react";
+import React from "react";
+import { motion } from "motion/react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import ProductCard from "@/features/products/components/ProductCard";
+import ProductCardMobile from "@/features/products/components/ProductCardMobile";
 import { mockProducts } from "@/features/products/data/mockProducts";
 import type { Product } from "@/features/products/types/product";
 import { cn } from "@/lib/utils";
@@ -25,101 +26,18 @@ export const ProductCarouselCardSection: React.FC<
   subtitle,
   badgeLabel,
   badgeBg = "bg-secondary-200 text-secondary-900 border-secondary-300 dark:bg-secondary-900 dark:text-secondary-100",
-  cardBg = "bg-primary-50/80 dark:bg-primary-950/20 border-primary-200/80 dark:border-primary-900/40",
   products,
   viewAllHref,
 }) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const intl = useIntl();
   const isRtl = intl.locale === "ar";
 
-  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
-  const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
+  const displayedProducts = products.slice(0, 4);
 
-  // Check scroll position to dynamically show/hide side arrows
-  const updateScrollButtons = useCallback(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    const maxScroll = scrollWidth - clientWidth;
-
-    if (maxScroll <= 2) {
-      setCanScrollLeft(false);
-      setCanScrollRight(false);
-      return;
-    }
-
-    const absScroll = Math.abs(scrollLeft);
-
-    if (isRtl) {
-      // In RTL layout:
-      // Content start is at far RIGHT. Content end is at far LEFT.
-      const isAtRightEdge =
-        absScroll < 5 ||
-        (scrollLeft > 0 && Math.abs(scrollLeft - maxScroll) < 5);
-      const isAtLeftEdge =
-        Math.abs(absScroll - maxScroll) < 5 ||
-        (scrollLeft < 0 && Math.abs(absScroll - maxScroll) < 5);
-
-      setCanScrollRight(!isAtRightEdge);
-      setCanScrollLeft(!isAtLeftEdge);
-    } else {
-      // In LTR layout:
-      // Content start is at far LEFT. Content end is at far RIGHT.
-      const isAtLeftEdge = scrollLeft <= 5;
-      const isAtRightEdge = scrollLeft >= maxScroll - 5;
-
-      setCanScrollLeft(!isAtLeftEdge);
-      setCanScrollRight(!isAtRightEdge);
-    }
-  }, [isRtl]);
-
-  useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    updateScrollButtons();
-    el.addEventListener("scroll", updateScrollButtons, { passive: true });
-    window.addEventListener("resize", updateScrollButtons);
-
-    return () => {
-      el.removeEventListener("scroll", updateScrollButtons);
-      window.removeEventListener("resize", updateScrollButtons);
-    };
-  }, [updateScrollButtons, products]);
-
-  const handleScrollLeft = () => {
-    if (!scrollContainerRef.current) return;
-    const container = scrollContainerRef.current;
-    const isMobile = window.innerWidth < 640;
-    const scrollAmount = isMobile ? 240 : container.clientWidth * 0.75;
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  const handleScrollRight = () => {
-    if (!scrollContainerRef.current) return;
-    const container = scrollContainerRef.current;
-    const isMobile = window.innerWidth < 640;
-    const scrollAmount = isMobile ? 240 : container.clientWidth * 0.75;
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  if (products.length === 0) return null;
+  if (displayedProducts.length === 0) return null;
 
   return (
-    <div
-      className={cn(
-        "relative rounded-3xl p-5 md:p-6 border shadow-xs transition-all flex flex-col justify-between overflow-hidden",
-        cardBg,
-      )}
-    >
+    <div className="flex flex-col justify-between">
       {/* Top Section Header */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="space-y-1">
@@ -133,7 +51,7 @@ export const ProductCarouselCardSection: React.FC<
               {badgeLabel}
             </span>
           )}
-          <h3 className="text-xl md:text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-snug">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-snug">
             {title}
           </h3>
           {subtitle && (
@@ -160,67 +78,31 @@ export const ProductCarouselCardSection: React.FC<
         </Link>
       </div>
 
-      {/* Carousel Track Container with Side Arrows */}
-      <div className="relative group/carousel my-auto">
-        {/* Left Side Navigation Arrow (Scrolls content to the Left) */}
-        <AnimatePresence>
-          {canScrollLeft && (
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleScrollLeft}
-              aria-label={intl.formatMessage({ id: "home.sections.prev" })}
-              className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-tertiary-200 dark:border-neutral-700 text-tertiary-800 dark:text-neutral-100 shadow-md flex items-center justify-center hover:bg-white dark:hover:bg-neutral-700 transition-all"
-            >
-              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
-            </motion.button>
-          )}
-        </AnimatePresence>
-
-        {/* Right Side Navigation Arrow (Scrolls content to the Right) */}
-        <AnimatePresence>
-          {canScrollRight && (
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleScrollRight}
-              aria-label={intl.formatMessage({ id: "home.sections.next" })}
-              className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-tertiary-200 dark:border-neutral-700 text-tertiary-800 dark:text-neutral-100 shadow-md flex items-center justify-center hover:bg-white dark:hover:bg-neutral-700 transition-all"
-            >
-              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-            </motion.button>
-          )}
-        </AnimatePresence>
-
-        {/* Scrollable Products Carousel with Snap Centering on Small Screens */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-3.5 md:gap-4 overflow-x-auto overflow-y-clip scroll-smooth scrollbar-none snap-x snap-mandatory sm:snap-none py-2 px-1 -mx-1 select-none touch-pan-x"
-        >
-          {products.map((product) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3 }}
-              className="w-[80vw] max-w-[230px] sm:w-[230px] md:w-[250px] shrink-0 snap-center sm:snap-start flex"
-            >
+      {/* Grid of Products (Max 4) */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4">
+        {displayedProducts.map((product) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
+            className="flex w-full"
+          >
+            <div className="w-full sm:hidden">
+              <ProductCardMobile
+                product={product}
+                className="h-full w-full"
+              />
+            </div>
+            <div className="hidden sm:flex w-full">
               <ProductCard
                 product={product}
-                className="h-full w-full bg-white/95 dark:bg-neutral-900/95 shadow-2xs"
+                className="h-full w-full"
               />
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
@@ -242,15 +124,13 @@ export const HomeBadgeGrids: React.FC = () => {
   const newProducts = mockProducts.filter((p) => p.badge === "new");
 
   return (
-    <section className="py-6 md:py-10">
+    <section className="my-8 md:my-12">
       <div className="container mx-auto px-4 md:px-6">
-        {/* Single Column Layout across all screen sizes */}
-        <div className="grid grid-cols-1 gap-6 md:gap-8">
+        <div className="flex flex-col gap-10 md:gap-14">
           {/* Best of Us */}
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.bestOfUs" />}
             badgeBg="bg-primary-200 text-primary-900 border-primary-300 dark:bg-primary-900 dark:text-primary-100"
-            cardBg="bg-primary-50/80 dark:bg-primary-950/20 border-primary-200/80 dark:border-primary-900/40"
             title={intl.formatMessage({ id: "home.sections.bestOfUs.title" })}
             subtitle={intl.formatMessage({
               id: "home.sections.bestOfUs.subtitle",
@@ -263,7 +143,6 @@ export const HomeBadgeGrids: React.FC = () => {
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.mostOrdered" />}
             badgeBg="bg-secondary-200 text-secondary-900 border-secondary-300 dark:bg-secondary-900 dark:text-secondary-100"
-            cardBg="bg-secondary-50/80 dark:bg-secondary-950/20 border-secondary-200/80 dark:border-secondary-900/40"
             title={intl.formatMessage({
               id: "home.sections.mostOrdered.title",
             })}
@@ -278,7 +157,6 @@ export const HomeBadgeGrids: React.FC = () => {
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.discount" />}
             badgeBg="bg-tertiary-200 text-tertiary-900 border-tertiary-300 dark:bg-tertiary-900 dark:text-tertiary-100"
-            cardBg="bg-tertiary-50/80 dark:bg-tertiary-950/20 border-tertiary-200/80 dark:border-tertiary-900/40"
             title={intl.formatMessage({ id: "home.sections.discount.title" })}
             subtitle={intl.formatMessage({
               id: "home.sections.discount.subtitle",
@@ -291,7 +169,6 @@ export const HomeBadgeGrids: React.FC = () => {
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.new" />}
             badgeBg="bg-primary-600 text-white border-primary-700 dark:bg-primary-800 dark:text-primary-100"
-            cardBg="bg-primary-100/60 dark:bg-primary-950/30 border-primary-200 dark:border-primary-900/50"
             title={intl.formatMessage({ id: "home.sections.new.title" })}
             subtitle={intl.formatMessage({ id: "home.sections.new.subtitle" })}
             products={newProducts}
@@ -314,15 +191,13 @@ export const HomeCategoryGrids: React.FC = () => {
   );
 
   return (
-    <section className="py-6 md:py-10">
+    <section className="my-8 md:my-12">
       <div className="container mx-auto px-4 md:px-6">
-        {/* Single Column Layout across all screen sizes */}
-        <div className="grid grid-cols-1 gap-6 md:gap-8">
+        <div className="flex flex-col gap-10 md:gap-14">
           {/* Skin Care Category Grid Cell */}
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="category.skincare.title" />}
             badgeBg="bg-secondary-600 text-white border-secondary-700 dark:bg-secondary-800 dark:text-secondary-100"
-            cardBg="bg-secondary-100/50 dark:bg-secondary-950/30 border-secondary-200 dark:border-secondary-900/50"
             title={intl.formatMessage({ id: "home.category.skincare.title" })}
             subtitle={intl.formatMessage({
               id: "home.category.skincare.subtitle",
@@ -335,7 +210,6 @@ export const HomeCategoryGrids: React.FC = () => {
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="category.bodycare.title" />}
             badgeBg="bg-tertiary-600 text-white border-tertiary-700 dark:bg-tertiary-800 dark:text-tertiary-100"
-            cardBg="bg-tertiary-100/50 dark:bg-tertiary-950/30 border-tertiary-200 dark:border-tertiary-900/50"
             title={intl.formatMessage({ id: "home.category.bodycare.title" })}
             subtitle={intl.formatMessage({
               id: "home.category.bodycare.subtitle",

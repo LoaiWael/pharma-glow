@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Sparkles, SlidersHorizontal } from "lucide-react";
+import { Sparkles, Filter } from "lucide-react";
 import { FormattedMessage } from "react-intl";
 import {
   useProducts,
   ProductCard,
+  ProductCardMobile,
   ProductFilters,
   type Product,
   type ProductType,
@@ -380,7 +381,7 @@ export const ProductsPage: React.FC = () => {
                 />
               }
             >
-              <SlidersHorizontal className="w-4 h-4" />
+              <Filter className="w-4 h-4" />
               <FormattedMessage id="products.filters.openButton" />
               {hasActiveFilters && (
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
@@ -390,7 +391,7 @@ export const ProductsPage: React.FC = () => {
             <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-gray-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-right">
               <DialogHeader className="mb-2">
                 <DialogTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <SlidersHorizontal className="w-5 h-5 text-secondary" />
+                  <Filter className="w-5 h-5 text-secondary" />
                   <FormattedMessage id="products.filters.title" />
                 </DialogTitle>
               </DialogHeader>
@@ -412,6 +413,7 @@ export const ProductsPage: React.FC = () => {
                 hasActiveFilters={hasActiveFilters}
                 totalFilteredCount={filteredProducts.length}
                 isSidebar={false}
+                hideHeader={true}
                 className="border-0 shadow-none bg-transparent dark:bg-transparent p-0"
               />
             </DialogContent>
@@ -450,7 +452,7 @@ export const ProductsPage: React.FC = () => {
               {filteredProducts.length > 0 ? (
                 <motion.div
                   layout
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 justify-items-center"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6 justify-items-center"
                 >
                   <AnimatePresence mode="popLayout">
                     {filteredProducts.map((product) => (
@@ -463,10 +465,18 @@ export const ProductsPage: React.FC = () => {
                         exit="exit"
                         className="w-full h-full flex justify-center"
                       >
-                        <ProductCard
-                          product={product}
-                          onAddToCart={handleAddToCart}
-                        />
+                        <div className="w-full sm:hidden">
+                          <ProductCardMobile
+                            product={product}
+                            onAddToCart={handleAddToCart}
+                          />
+                        </div>
+                        <div className="hidden sm:flex w-full justify-center">
+                          <ProductCard
+                            product={product}
+                            onAddToCart={handleAddToCart}
+                          />
+                        </div>
                       </motion.div>
                     ))}
                   </AnimatePresence>

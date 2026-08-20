@@ -1,7 +1,12 @@
-import { CartView } from '@/features/cart'
+import { CartView } from "@/features/cart";
+import { useEffect } from "react";
 
 const CartPage = () => {
-  return <CartView />
-}
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
-export default CartPage
+  return <CartView />;
+};
+
+export default CartPage;

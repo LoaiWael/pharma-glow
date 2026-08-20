@@ -1,7 +1,15 @@
 export { default as ProductCard } from "./components/ProductCard";
+export { default as ProductCardMobile } from "./components/ProductCardMobile";
 export { default as ProductFilters } from "./components/ProductFilters";
+export { default as ProductImageGallery } from "./components/ProductImageGallery";
+export { default as ProductInfoMain } from "./components/ProductInfoMain";
+export { default as ProductBuyBox } from "./components/ProductBuyBox";
+export { default as MobileStickyBottomBar } from "./components/MobileStickyBottomBar";
+export { default as FrequentlyBoughtTogether } from "./components/FrequentlyBoughtTogether";
+export { default as ProductOverviewTabs } from "./components/ProductOverviewTabs";
+export { default as ProductReviewsSection } from "./components/ProductReviewsSection";
+export { default as ProductRelevantCarousel } from "./components/ProductRelevantCarousel";
 export * from "./api/query-keys";
 export * from "./api/use-products";
 export * from "./data/mockProducts";
 export * from "./types";
-

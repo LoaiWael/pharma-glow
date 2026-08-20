@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   Search,
-  SlidersHorizontal,
+  Filter,
   RotateCcw,
   Check,
   Star,
@@ -44,9 +44,11 @@ export interface ProductFiltersProps {
   totalFilteredCount: number;
   className?: string;
   isSidebar?: boolean;
+  allowedProductTypes?: ProductType[];
+  hideHeader?: boolean;
 }
 
-const productTypeOptions: { id: ProductType; labelKey: string }[] = [
+const defaultProductTypeOptions: { id: ProductType; labelKey: string }[] = [
   { id: "all", labelKey: "products.filters.type.all" },
   { id: "serum", labelKey: "products.filters.type.serum" },
   { id: "cream", labelKey: "products.filters.type.cream" },
@@ -79,11 +81,21 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   totalFilteredCount,
   className,
   isSidebar = false,
+  allowedProductTypes,
+  hideHeader = false,
 }) => {
   const intl = useIntl();
-  const [isOpen, setIsOpen] = useState(true);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const { data: filterMeta } = useProductFilterMeta();
+
+  const productTypeOptions = React.useMemo(() => {
+    if (!allowedProductTypes || allowedProductTypes.length === 0) {
+      return defaultProductTypeOptions;
+    }
+    return defaultProductTypeOptions.filter(
+      (opt) => opt.id === "all" || allowedProductTypes.includes(opt.id),
+    );
+  }, [allowedProductTypes]);
 
   // Local immediate input state with debounce sync to parent query
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -141,78 +153,50 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         className,
       )}
     >
-      {/* Top Filter Bar Header (Static on Sidebar/Desktop) */}
-      <div
-        className={cn(
-          "p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-neutral-800/80 select-none",
-          !isSidebar && "cursor-pointer hover:bg-gray-50/70 dark:hover:bg-neutral-800/40 transition-colors",
-        )}
-        onClick={() => {
-          if (!isSidebar) setIsOpen((prev) => !prev);
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary shrink-0">
-            <SlidersHorizontal className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2 m-0">
-              <FormattedMessage id="products.filters.title" />
-              {hasActiveFilters && (
-                <span className="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse" />
-              )}
-            </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-              <FormattedMessage
-                id="products.count"
-                values={{ count: totalFilteredCount }}
-              />
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          {hasActiveFilters && (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onResetFilters();
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-secondary bg-secondary-50 dark:bg-secondary-950/40 hover:bg-secondary-100 transition-colors cursor-pointer border border-secondary/20"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <FormattedMessage id="products.filters.clearAll" />
-            </motion.button>
-          )}
-
-          {!isSidebar && (
-            <div
-              className="p-2 rounded-xl text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-              aria-label="Toggle Filters Panel"
-            >
-              <ChevronDown
-                className={cn(
-                  "w-5 h-5 transition-transform duration-300",
-                  isOpen && "rotate-180",
-                )}
-              />
+      {/* Top Filter Bar Header */}
+      {!hideHeader && (
+        <div className="p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 dark:border-neutral-800/80 select-none">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-secondary/10 dark:bg-secondary/20 flex items-center justify-center text-secondary shrink-0">
+              <Filter className="w-5 h-5" />
             </div>
-          )}
-        </div>
-      </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2 m-0">
+                <FormattedMessage id="products.filters.title" />
+                {hasActiveFilters && (
+                  <span className="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse" />
+                )}
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                <FormattedMessage
+                  id="products.count"
+                  values={{ count: totalFilteredCount }}
+                />
+              </p>
+            </div>
+          </div>
 
-      {/* Filter Body (Always open on sidebar/large screens) */}
-      <AnimatePresence initial={false}>
-        {(isOpen || isSidebar) && (
-          <motion.div
-            initial={isSidebar ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={isSidebar ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
+          <div className="flex items-center gap-2.5">
+            {hasActiveFilters && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onResetFilters();
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-secondary bg-secondary-50 dark:bg-secondary-950/40 hover:bg-secondary-100 transition-colors cursor-pointer border border-secondary/20"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <FormattedMessage id="products.filters.clearAll" />
+              </motion.button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Filter Body */}
+      <div>
             <div className="p-4 sm:p-5 space-y-5">
               {/* Row 1: Search & Sorting */}
               <div className={cn("grid gap-3 items-center", isSidebar ? "grid-cols-1" : "grid-cols-1 md:grid-cols-12")}>
@@ -505,9 +489,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 };

@@ -12,10 +12,23 @@ export interface ProductFilterState {
   sortBy: "featured" | "price_asc" | "price_desc" | "rating" | "discount";
 }
 
+export interface ProductReview {
+  id: string | number;
+  author: string;
+  rating: number;
+  date: string;
+  title?: string;
+  comment: string;
+  isVerifiedPurchase?: boolean;
+  helpfulCount?: number;
+}
+
 export interface Product {
   id: string | number;
   title: string;
   titleAr?: string;
+  brand?: string;
+  brandAr?: string;
   category?: ProductCategory;
   productType?: ProductType;
   image: string;
@@ -30,6 +43,27 @@ export interface Product {
   isFreeDelivery?: boolean;
   isFavorite?: boolean;
   inStock?: boolean;
+  stockCount?: number;
+  volume?: string;
+  volumeOptions?: string[];
+  skinType?: string[];
+  keyIngredients?: string[];
+  description?: string;
+  descriptionAr?: string;
+  overviewHighlights?: string[];
+  overviewHighlightsAr?: string[];
+  howToUse?: string;
+  howToUseAr?: string;
+  specifications?: Record<string, string>;
+  specificationsAr?: Record<string, string>;
+  ratingBreakdown?: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+  };
+  reviews?: ProductReview[];
 }
 
 export interface ProductCardProps {

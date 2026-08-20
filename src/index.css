@@ -250,7 +250,8 @@ code {
 
 @theme inline {
   --animate-marquee: marquee var(--duration, 40s) infinite linear;
-  --animate-marquee-vertical: marquee-vertical var(--duration, 40s) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration, 40s) linear
+    infinite;
 
   --font-heading: var(--font-sans);
   --font-ibm-plex-sans-arabic: "IBM Plex Sans Arabic", sans-serif;
@@ -384,7 +385,7 @@ code {
   margin-inline: auto;
   width: 100%;
   max-width: var(--page-max-width);
-  padding-inline: 1rem;
+  padding-inline: 0.5rem;
 
   @media (min-width: 640px) {
     padding-inline: 1.5rem;
