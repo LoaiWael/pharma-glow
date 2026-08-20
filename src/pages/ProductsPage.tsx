@@ -28,7 +28,6 @@ import {
   itemProductCardVariants,
 } from "@/lib/animation-variants";
 
-
 export const ProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -238,7 +237,7 @@ export const ProductsPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-gray-50/60 dark:bg-neutral-950 py-8"
+      className="min-h-screen bg-gray-50/60 dark:bg-neutral-950 py-8 pb-24 lg:pb-8"
     >
       <div className="page-shell mx-auto space-y-8">
         {/* Toast Alert for Cart addition */}
@@ -356,70 +355,6 @@ export const ProductsPage: React.FC = () => {
           </AnimationContainer>
         </div>
 
-        {/* Mobile Filter Button and Active Filter Count Bar */}
-        <div className="flex lg:hidden items-center justify-between gap-3 bg-white dark:bg-neutral-900 p-3.5 rounded-2xl border border-gray-200/80 dark:border-neutral-800 shadow-xs">
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300">
-            <span className="font-bold text-gray-900 dark:text-white">
-              <FormattedMessage
-                id="products.count"
-                values={{ count: filteredProducts.length }}
-              />
-            </span>
-            {hasActiveFilters && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary text-white">
-                مفعل
-              </span>
-            )}
-          </div>
-
-          <Dialog>
-            <DialogTrigger
-              render={
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold shadow-sm shadow-secondary/25 hover:bg-secondary-600 transition-all cursor-pointer"
-                />
-              }
-            >
-              <Filter className="w-4 h-4" />
-              <FormattedMessage id="products.filters.openButton" />
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              )}
-            </DialogTrigger>
-
-            <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-gray-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-right">
-              <DialogHeader className="mb-2">
-                <DialogTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-secondary" />
-                  <FormattedMessage id="products.filters.title" />
-                </DialogTitle>
-              </DialogHeader>
-
-              <ProductFilters
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                selectedType={selectedType}
-                onTypeChange={handleTypeChange}
-                priceRange={priceRange}
-                onPriceRangeChange={handlePriceRangeChange}
-                minPossiblePrice={0}
-                maxPossiblePrice={2500}
-                minRating={minRating}
-                onMinRatingChange={handleMinRatingChange}
-                sortBy={sortBy}
-                onSortByChange={handleSortByChange}
-                onResetFilters={handleResetFilters}
-                hasActiveFilters={hasActiveFilters}
-                totalFilteredCount={filteredProducts.length}
-                isSidebar={false}
-                hideHeader={true}
-                className="border-0 shadow-none bg-transparent dark:bg-transparent p-0"
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-
         {/* Main Content Layout: Sidebar on Desktop (lg+), Grid on Right */}
         <div className="flex flex-col lg:flex-row items-start gap-8">
           {/* Desktop Filters Sidebar */}
@@ -452,7 +387,7 @@ export const ProductsPage: React.FC = () => {
               {filteredProducts.length > 0 ? (
                 <motion.div
                   layout
-                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6 justify-items-center"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-4 xl:gap-4.5 justify-items-center"
                 >
                   <AnimatePresence mode="popLayout">
                     {filteredProducts.map((product) => (
@@ -504,6 +439,70 @@ export const ProductsPage: React.FC = () => {
             </AnimatePresence>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Fixed Bottom Filter Bar */}
+      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-t border-gray-200/80 dark:border-neutral-800 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300">
+          <span className="font-bold text-gray-900 dark:text-white">
+            <FormattedMessage
+              id="products.count"
+              values={{ count: filteredProducts.length }}
+            />
+          </span>
+          {hasActiveFilters && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary text-white">
+              مفعل
+            </span>
+          )}
+        </div>
+
+        <Dialog>
+          <DialogTrigger
+            render={
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary text-white text-xs font-bold shadow-sm shadow-secondary/25 hover:bg-secondary-600 transition-all cursor-pointer"
+              />
+            }
+          >
+            <Filter className="w-4 h-4" />
+            <FormattedMessage id="products.filters.openButton" />
+            {hasActiveFilters && (
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+            )}
+          </DialogTrigger>
+
+          <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-gray-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-right">
+            <DialogHeader className="mb-2">
+              <DialogTitle className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Filter className="w-5 h-5 text-secondary" />
+                <FormattedMessage id="products.filters.title" />
+              </DialogTitle>
+            </DialogHeader>
+
+            <ProductFilters
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              priceRange={priceRange}
+              onPriceRangeChange={handlePriceRangeChange}
+              minPossiblePrice={0}
+              maxPossiblePrice={2500}
+              minRating={minRating}
+              onMinRatingChange={handleMinRatingChange}
+              sortBy={sortBy}
+              onSortByChange={handleSortByChange}
+              onResetFilters={handleResetFilters}
+              hasActiveFilters={hasActiveFilters}
+              totalFilteredCount={filteredProducts.length}
+              isSidebar={false}
+              hideHeader={true}
+              className="border-0 shadow-none bg-transparent dark:bg-transparent p-0"
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

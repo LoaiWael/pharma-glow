@@ -227,7 +227,7 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
           whileTap={{ scale: 0.88 }}
           onClick={handleFavoriteClick}
           aria-label={intl.formatMessage({ id: "nav.wishlist" })}
-          className="absolute top-1.5 left-1.5 z-10 w-6 h-6 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-xs rounded-full shadow-2xs border border-gray-100 dark:border-neutral-700 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"
+          className="absolute top-1.5 left-1.5 z-10 w-7 h-7 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-xs rounded-full shadow-2xs border border-gray-100 dark:border-neutral-700 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"
         >
           <Heart
             className={cn(
@@ -360,7 +360,7 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
             onClick={handleAddClick}
             aria-label={intl.formatMessage({ id: "product.addToBag" })}
             className={cn(
-              "w-6 h-6 rounded-md shadow-2xs border transition-all duration-200 flex items-center justify-center focus:outline-none shrink-0 self-end",
+              "w-7 h-7 rounded-md shadow-2xs border transition-all duration-200 flex items-center justify-center focus:outline-none shrink-0 self-end",
               isAdded
                 ? "bg-emerald-600 border-emerald-600 text-white"
                 : "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary-700",

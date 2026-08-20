@@ -1,19 +1,28 @@
 import React, { useState } from "react";
-import { Star, CheckCircle, ThumbsUp, MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Star, CheckCircle, ThumbsUp, MessageSquare, ArrowRight, ArrowLeft } from "lucide-react";
 import { useIntl } from "react-intl";
 import { cn } from "@/lib/utils";
 import type { Product, ProductReview } from "@/features/products/types/product";
+import { DEFAULT_LOCALE, isLocale, LOCALE_DIR } from "@/i18n/locales";
 
 interface ProductReviewsSectionProps {
   product: Product;
   className?: string;
+  maxDisplay?: number;
+  showViewAllButton?: boolean;
 }
 
 export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
   product,
   className,
+  maxDisplay = 4,
+  showViewAllButton = true,
 }) => {
   const intl = useIntl();
+  const locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
+  const isRtl = LOCALE_DIR[locale] === "rtl";
+
   const rating = product.rating ?? 4.8;
   const reviewCount = product.reviewCount ?? 120;
   const breakdown = product.ratingBreakdown || {
@@ -74,6 +83,10 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
     ? defaultReviews.filter((r) => r.rating === filterRating)
     : defaultReviews;
 
+  const displayedReviews = maxDisplay
+    ? filteredReviews.slice(0, maxDisplay)
+    : filteredReviews;
+
   return (
     <section
       id="customer-reviews-section"
@@ -82,17 +95,39 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
         className
       )}
     >
-      <div className="flex items-center gap-2">
-        <MessageSquare className="w-5 h-5 text-secondary" />
-        <h2 className="text-lg md:text-xl font-bold text-foreground m-0">
-          {intl.formatMessage(
-            {
-              id: "product.reviews.title",
-              defaultMessage: "تقييمات وآراء العملاء ({count})",
-            },
-            { count: reviewCount }
-          )}
-        </h2>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-secondary" />
+          <h2 className="text-lg md:text-xl font-bold text-foreground m-0">
+            {intl.formatMessage(
+              {
+                id: "product.reviews.title",
+                defaultMessage: "تقييمات وآراء العملاء ({count})",
+              },
+              { count: reviewCount }
+            )}
+          </h2>
+        </div>
+
+        {showViewAllButton && (
+          <Link
+            to={`/products/${product.id}/reviews`}
+            viewTransition
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-secondary-700 transition-colors"
+          >
+            <span>
+              {intl.formatMessage({
+                id: "reviews.viewAll",
+                defaultMessage: "عرض جميع التقييمات",
+              })}
+            </span>
+            {isRtl ? (
+              <ArrowLeft className="w-3.5 h-3.5" />
+            ) : (
+              <ArrowRight className="w-3.5 h-3.5" />
+            )}
+          </Link>
+        )}
       </div>
 
       {/* Ratings Summary (Score box + Bar chart - Noon pattern) */}
@@ -172,7 +207,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
 
       {/* Review items list */}
       <div className="flex flex-col divide-y divide-border/60">
-        {filteredReviews.length === 0 ? (
+        {displayedReviews.length === 0 ? (
           <p className="text-center py-6 text-xs text-tertiary">
             {intl.formatMessage({
               id: "product.reviews.empty",
@@ -180,7 +215,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
             })}
           </p>
         ) : (
-          filteredReviews.map((rev) => {
+          displayedReviews.map((rev) => {
             const isHelpful = Boolean(helpfulMap[rev.id]);
             const count = (rev.helpfulCount || 0) + (isHelpful ? 1 : 0);
 
@@ -258,6 +293,28 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
           })
         )}
       </div>
+
+      {showViewAllButton && defaultReviews.length > 0 && (
+        <div className="pt-2 flex justify-center">
+          <Link
+            to={`/products/${product.id}/reviews`}
+            viewTransition
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border border-secondary/30 bg-secondary/10 hover:bg-secondary/20 text-secondary font-bold text-xs transition-colors"
+          >
+            <span>
+              {intl.formatMessage({
+                id: "reviews.viewAll",
+                defaultMessage: "عرض جميع التقييمات",
+              })}
+            </span>
+            {isRtl ? (
+              <ArrowLeft className="w-4 h-4" />
+            ) : (
+              <ArrowRight className="w-4 h-4" />
+            )}
+          </Link>
+        </div>
+      )}
     </section>
   );
 };

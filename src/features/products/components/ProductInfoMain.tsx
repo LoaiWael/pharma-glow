@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Star,
   ShieldCheck,
@@ -49,12 +50,7 @@ export const ProductInfoMain: React.FC<ProductInfoMainProps> = ({
     onSelectVolume?.(vol);
   };
 
-  const scrollToReviews = () => {
-    const el = document.getElementById("customer-reviews-section");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const reviewsPath = `/products/${product.id}/reviews`;
 
   return (
     <div className={cn("flex flex-col gap-4 text-foreground", className)}>
@@ -92,18 +88,18 @@ export const ProductInfoMain: React.FC<ProductInfoMainProps> = ({
 
       {/* Ratings & SKU row */}
       <div className="flex items-center gap-3 pb-2 border-b border-border/70 flex-wrap text-xs">
-        <button
-          type="button"
-          onClick={scrollToReviews}
+        <Link
+          to={reviewsPath}
+          viewTransition
           className="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-white font-bold px-2.5 py-1 rounded-full text-xs cursor-pointer hover:bg-gray-200 dark:hover:bg-neutral-700 transition-colors"
         >
           <span>{rating.toFixed(1)}</span>
           <Star className="w-3.5 h-3.5 fill-emerald-500 text-emerald-500 stroke-none" />
-        </button>
+        </Link>
 
-        <button
-          type="button"
-          onClick={scrollToReviews}
+        <Link
+          to={reviewsPath}
+          viewTransition
           className="text-tertiary hover:text-secondary underline decoration-dotted transition-colors cursor-pointer"
         >
           {intl.formatMessage(
@@ -113,7 +109,7 @@ export const ProductInfoMain: React.FC<ProductInfoMainProps> = ({
             },
             { count: reviewCount },
           )}
-        </button>
+        </Link>
 
         <span className="text-border">|</span>
 

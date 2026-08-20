@@ -8,6 +8,7 @@ import HowToOrderPage from '@/pages/HowToOrderPage'
 import OffersPage from '@/pages/OffersPage'
 import OrdersPage from '@/pages/OrdersPage'
 import ProductDetailsPage from '@/pages/ProductDetailsPage'
+import ProductReviewsPage from '@/pages/ProductReviewsPage'
 import ProductsPage from '@/pages/ProductsPage'
 import ReviewsPage from '@/pages/ReviewsPage'
 import SkinCarePage from '@/pages/SkinCarePage'
@@ -17,6 +18,7 @@ const localeChildren = [
   { index: true, element: <HomePage /> },
   { path: 'products', element: <ProductsPage /> },
   { path: 'products/:id', element: <ProductDetailsPage /> },
+  { path: 'products/:id/reviews', element: <ProductReviewsPage /> },
   { path: 'offers', element: <OffersPage /> },
   { path: 'skincare', element: <SkinCarePage /> },
   { path: 'bodycare', element: <BodyCarePage /> },

@@ -203,7 +203,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       dir={direction}
       onClick={handleCardClick}
       className={cn(
-        "group relative flex flex-col w-full max-w-[320px] bg-white dark:bg-neutral-900 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-3 shadow-xs cursor-pointer select-none",
+        "group relative flex flex-col w-full bg-white dark:bg-neutral-900 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-3 shadow-xs cursor-pointer select-none",
         className,
       )}
     >

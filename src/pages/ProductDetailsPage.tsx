@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useIntl } from "react-intl";
-import { ChevronLeft, ChevronRight, Home, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import {
   useProduct,
   useRelatedProducts,
@@ -30,11 +36,11 @@ export const ProductDetailsPage: React.FC = () => {
   const { data: product, isLoading } = useProduct(id || "p1");
   const { data: relatedProducts = [] } = useRelatedProducts(
     id || "p1",
-    product?.category
+    product?.category,
   );
 
   const [selectedVolume, setSelectedVolume] = useState<string | undefined>(
-    product?.volume
+    product?.volume,
   );
   const [isFav, setIsFav] = useState(product?.isFavorite || false);
 
@@ -76,7 +82,11 @@ export const ProductDetailsPage: React.FC = () => {
           to="/products"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm"
         >
-          {isRtl ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+          {isRtl ? (
+            <ArrowRight className="w-4 h-4" />
+          ) : (
+            <ArrowLeft className="w-4 h-4" />
+          )}
           <span>
             {intl.formatMessage({
               id: "product.notFound.browse",
@@ -95,21 +105,21 @@ export const ProductDetailsPage: React.FC = () => {
           defaultMessage: "العناية بالبشرة",
         })
       : product.category === "body_care"
-      ? intl.formatMessage({
-          id: "category.bodycare.title",
-          defaultMessage: "العناية بالجسم",
-        })
-      : intl.formatMessage({
-          id: "products.filter.all",
-          defaultMessage: "جميع المنتجات",
-        });
+        ? intl.formatMessage({
+            id: "category.bodycare.title",
+            defaultMessage: "العناية بالجسم",
+          })
+        : intl.formatMessage({
+            id: "products.filter.all",
+            defaultMessage: "جميع المنتجات",
+          });
 
   const categoryPath =
     product.category === "skin_care"
       ? "/skincare"
       : product.category === "body_care"
-      ? "/bodycare"
-      : "/products";
+        ? "/bodycare"
+        : "/products";
 
   const handleAddToCart = (item: Product, qty: number) => {
     console.log("Adding to cart:", item.title, "Qty:", qty);
@@ -124,9 +134,7 @@ export const ProductDetailsPage: React.FC = () => {
   };
 
   const productTitle =
-    locale === "ar" && product.titleAr
-      ? product.titleAr
-      : product.title;
+    locale === "ar" && product.titleAr ? product.titleAr : product.title;
 
   return (
     <div className="min-h-screen bg-neutral/30 pb-24 lg:pb-16">
@@ -138,6 +146,7 @@ export const ProductDetailsPage: React.FC = () => {
         >
           <Link
             to="/"
+            viewTransition
             className="hover:text-secondary flex items-center gap-1 transition-colors"
           >
             <Home className="w-3.5 h-3.5" />
@@ -156,6 +165,7 @@ export const ProductDetailsPage: React.FC = () => {
 
           <Link
             to={categoryPath}
+            viewTransition
             className="hover:text-secondary transition-colors"
           >
             {categoryName}
@@ -190,16 +200,6 @@ export const ProductDetailsPage: React.FC = () => {
               isFavorite={isFav}
               onToggleFavorite={() => setIsFav(!isFav)}
             />
-
-            {/* ProductBuyBox under the photo preview on desktop screens */}
-            <div className="hidden lg:block">
-              <ProductBuyBox
-                product={product}
-                selectedVolume={selectedVolume}
-                onAddToCart={handleAddToCart}
-                onBuyNow={handleBuyNow}
-              />
-            </div>
           </div>
 
           {/* Column 2: Product Info Main */}
@@ -208,6 +208,12 @@ export const ProductDetailsPage: React.FC = () => {
               product={product}
               selectedVolume={selectedVolume}
               onSelectVolume={setSelectedVolume}
+            />
+            <ProductBuyBox
+              product={product}
+              selectedVolume={selectedVolume}
+              onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
             />
           </div>
         </div>

@@ -79,7 +79,7 @@ export const ProductCarouselCardSection: React.FC<
       </div>
 
       {/* Grid of Products (Max 4) */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 md:gap-3 lg:gap-3.5">
         {displayedProducts.map((product) => (
           <motion.div
             key={product.id}
@@ -125,9 +125,8 @@ export const HomeBadgeGrids: React.FC = () => {
 
   return (
     <section className="my-8 md:my-12">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col gap-10 md:gap-14">
-          {/* Best of Us */}
+      <div className="flex flex-col gap-10 md:gap-14">
+        {/* Best of Us */}
           <ProductCarouselCardSection
             badgeLabel={<FormattedMessage id="product.bestOfUs" />}
             badgeBg="bg-primary-200 text-primary-900 border-primary-300 dark:bg-primary-900 dark:text-primary-100"
@@ -175,7 +174,6 @@ export const HomeBadgeGrids: React.FC = () => {
             viewAllHref="/products?badge=new"
           />
         </div>
-      </div>
     </section>
   );
 };
@@ -192,32 +190,30 @@ export const HomeCategoryGrids: React.FC = () => {
 
   return (
     <section className="my-8 md:my-12">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col gap-10 md:gap-14">
-          {/* Skin Care Category Grid Cell */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="category.skincare.title" />}
-            badgeBg="bg-secondary-600 text-white border-secondary-700 dark:bg-secondary-800 dark:text-secondary-100"
-            title={intl.formatMessage({ id: "home.category.skincare.title" })}
-            subtitle={intl.formatMessage({
-              id: "home.category.skincare.subtitle",
-            })}
-            products={skinCareProducts}
-            viewAllHref="/products?category=skin_care"
-          />
+      <div className="flex flex-col gap-10 md:gap-14">
+        {/* Skin Care Category Grid Cell */}
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="category.skincare.title" />}
+          badgeBg="bg-secondary-600 text-white border-secondary-700 dark:bg-secondary-800 dark:text-secondary-100"
+          title={intl.formatMessage({ id: "home.category.skincare.title" })}
+          subtitle={intl.formatMessage({
+            id: "home.category.skincare.subtitle",
+          })}
+          products={skinCareProducts}
+          viewAllHref="/products?category=skin_care"
+        />
 
-          {/* Body Care Category Grid Cell */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="category.bodycare.title" />}
-            badgeBg="bg-tertiary-600 text-white border-tertiary-700 dark:bg-tertiary-800 dark:text-tertiary-100"
-            title={intl.formatMessage({ id: "home.category.bodycare.title" })}
-            subtitle={intl.formatMessage({
-              id: "home.category.bodycare.subtitle",
-            })}
-            products={bodyCareProducts}
-            viewAllHref="/products?category=body_care"
-          />
-        </div>
+        {/* Body Care Category Grid Cell */}
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="category.bodycare.title" />}
+          badgeBg="bg-tertiary-600 text-white border-tertiary-700 dark:bg-tertiary-800 dark:text-tertiary-100"
+          title={intl.formatMessage({ id: "home.category.bodycare.title" })}
+          subtitle={intl.formatMessage({
+            id: "home.category.bodycare.subtitle",
+          })}
+          products={bodyCareProducts}
+          viewAllHref="/products?category=body_care"
+        />
       </div>
     </section>
   );
