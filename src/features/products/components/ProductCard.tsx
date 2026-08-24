@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { Check, Heart, Image as ImageIcon, Plus, Star, Truck } from "lucide-react";
+import {
+  Check,
+  Heart,
+  Image as ImageIcon,
+  Plus,
+  Star,
+  Truck,
+} from "lucide-react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import {
@@ -306,48 +313,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {title}
           </h3>
 
-          {/* Rating Row */}
-          {rating > 0 && (
-            <div className="flex items-center justify-start gap-1">
-              <div className="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full text-xs font-semibold">
-                <span className="text-gray-500 dark:text-gray-400 font-normal">
-                  ( {formattedReviewCount} )
-                </span>
-                <span className="text-gray-900 dark:text-white font-bold">
-                  {rating}
-                </span>
-                <Star className="w-3.5 h-3.5 fill-emerald-500 text-emerald-500 stroke-none" />
-              </div>
-            </div>
-          )}
+          {/* Rating & Free Delivery Row */}
+          {(rating > 0 || isFreeDelivery) && (
+            <div className="flex items-center justify-between gap-2 flex-wrap min-h-[1.625rem]">
+              {rating > 0 && (
+                <div className="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded-full text-xs font-semibold shrink-0">
+                  <span className="text-gray-500 dark:text-gray-400 font-normal">
+                    ( {formattedReviewCount} )
+                  </span>
+                  <span className="text-gray-900 dark:text-white font-bold">
+                    {rating}
+                  </span>
+                  <Star className="w-3.5 h-3.5 fill-emerald-500 text-emerald-500 stroke-none" />
+                </div>
+              )}
 
-          {/* Free Delivery Tag */}
-          {isFreeDelivery && (
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 dark:text-gray-300 pt-0.5">
-              <Truck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span>
-                <FormattedMessage id="product.freeDelivery" />
-              </span>
+              {isFreeDelivery && (
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 shrink-0">
+                  <Truck className="w-4 h-4" />
+                  <span>
+                    <FormattedMessage id="product.freeDelivery" />
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         {/* Bottom Bar: Price row on right, Simple small button at bottom left */}
         <div className="flex items-center justify-between pt-2 gap-2">
-          {/* Price Block */}
-          <div className="flex flex-col justify-center min-w-0">
+          {/* Price Block: Current price, original price & discount next to each other */}
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
             {/* Main Current Price */}
-            <div className="flex items-baseline gap-1 text-gray-900 dark:text-white font-extrabold text-base md:text-lg leading-tight">
+            <div className="flex items-baseline gap-1 text-gray-900 dark:text-white font-extrabold text-base md:text-lg leading-tight shrink-0">
               <span>{formattedPrice}</span>
               <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
                 {currencySymbol}
               </span>
             </div>
 
-            {/* Original Price & Discount Percentage Row */}
+            {/* Original Price & Discount Percentage */}
             {(formattedOriginalPrice ||
               (discountPercent && discountPercent > 0)) && (
-              <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
+              <div className="flex items-center gap-1.5 shrink-0">
                 {formattedOriginalPrice && (
                   <span className="line-through text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">
                     {formattedOriginalPrice} {currencySymbol}

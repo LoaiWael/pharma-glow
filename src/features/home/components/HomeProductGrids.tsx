@@ -7,7 +7,6 @@ import ProductCard from "@/features/products/components/ProductCard";
 import ProductCardMobile from "@/features/products/components/ProductCardMobile";
 import { mockProducts } from "@/features/products/data/mockProducts";
 import type { Product } from "@/features/products/types/product";
-import { cn } from "@/lib/utils";
 
 interface ProductCarouselSectionProps {
   title: React.ReactNode;
@@ -21,14 +20,7 @@ interface ProductCarouselSectionProps {
 
 export const ProductCarouselCardSection: React.FC<
   ProductCarouselSectionProps
-> = ({
-  title,
-  subtitle,
-  badgeLabel,
-  badgeBg = "bg-secondary-200 text-secondary-900 border-secondary-300 dark:bg-secondary-900 dark:text-secondary-100",
-  products,
-  viewAllHref,
-}) => {
+> = ({ title, subtitle, products, viewAllHref }) => {
   const intl = useIntl();
   const isRtl = intl.locale === "ar";
 
@@ -39,18 +31,8 @@ export const ProductCarouselCardSection: React.FC<
   return (
     <div className="flex flex-col justify-between">
       {/* Top Section Header */}
-      <div className="flex items-start justify-between gap-3 mb-4">
+      <div className="flex items-end justify-between gap-3 mb-4">
         <div className="space-y-1">
-          {badgeLabel && (
-            <span
-              className={cn(
-                "inline-flex items-center gap-1.5 text-xs font-bold px-3 py-0.5 rounded-full border shadow-2xs mb-1",
-                badgeBg,
-              )}
-            >
-              {badgeLabel}
-            </span>
-          )}
           <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-snug">
             {title}
           </h3>
@@ -90,16 +72,10 @@ export const ProductCarouselCardSection: React.FC<
             className="flex w-full"
           >
             <div className="w-full sm:hidden">
-              <ProductCardMobile
-                product={product}
-                className="h-full w-full"
-              />
+              <ProductCardMobile product={product} className="h-full w-full" />
             </div>
             <div className="hidden sm:flex w-full">
-              <ProductCard
-                product={product}
-                className="h-full w-full"
-              />
+              <ProductCard product={product} className="h-full w-full" />
             </div>
           </motion.div>
         ))}
@@ -127,53 +103,53 @@ export const HomeBadgeGrids: React.FC = () => {
     <section className="my-8 md:my-12">
       <div className="flex flex-col gap-10 md:gap-14">
         {/* Best of Us */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="product.bestOfUs" />}
-            badgeBg="bg-primary-200 text-primary-900 border-primary-300 dark:bg-primary-900 dark:text-primary-100"
-            title={intl.formatMessage({ id: "home.sections.bestOfUs.title" })}
-            subtitle={intl.formatMessage({
-              id: "home.sections.bestOfUs.subtitle",
-            })}
-            products={bestOfUsProducts}
-            viewAllHref="/products?badge=best_of_us"
-          />
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="product.bestOfUs" />}
+          badgeBg="bg-primary-200 text-primary-900 border-primary-300 dark:bg-primary-900 dark:text-primary-100"
+          title={intl.formatMessage({ id: "home.sections.bestOfUs.title" })}
+          subtitle={intl.formatMessage({
+            id: "home.sections.bestOfUs.subtitle",
+          })}
+          products={bestOfUsProducts}
+          viewAllHref="/products?badge=best_of_us"
+        />
 
-          {/* Most Ordered */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="product.mostOrdered" />}
-            badgeBg="bg-secondary-200 text-secondary-900 border-secondary-300 dark:bg-secondary-900 dark:text-secondary-100"
-            title={intl.formatMessage({
-              id: "home.sections.mostOrdered.title",
-            })}
-            subtitle={intl.formatMessage({
-              id: "home.sections.mostOrdered.subtitle",
-            })}
-            products={mostOrderedProducts}
-            viewAllHref="/products?badge=most_ordered"
-          />
+        {/* Most Ordered */}
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="product.mostOrdered" />}
+          badgeBg="bg-secondary-200 text-secondary-900 border-secondary-300 dark:bg-secondary-900 dark:text-secondary-100"
+          title={intl.formatMessage({
+            id: "home.sections.mostOrdered.title",
+          })}
+          subtitle={intl.formatMessage({
+            id: "home.sections.mostOrdered.subtitle",
+          })}
+          products={mostOrderedProducts}
+          viewAllHref="/products?badge=most_ordered"
+        />
 
-          {/* Discounts & Offers */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="product.discount" />}
-            badgeBg="bg-tertiary-200 text-tertiary-900 border-tertiary-300 dark:bg-tertiary-900 dark:text-tertiary-100"
-            title={intl.formatMessage({ id: "home.sections.discount.title" })}
-            subtitle={intl.formatMessage({
-              id: "home.sections.discount.subtitle",
-            })}
-            products={discountProducts}
-            viewAllHref="/products?badge=discount"
-          />
+        {/* Discounts & Offers */}
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="product.discount" />}
+          badgeBg="bg-tertiary-200 text-tertiary-900 border-tertiary-300 dark:bg-tertiary-900 dark:text-tertiary-100"
+          title={intl.formatMessage({ id: "home.sections.discount.title" })}
+          subtitle={intl.formatMessage({
+            id: "home.sections.discount.subtitle",
+          })}
+          products={discountProducts}
+          viewAllHref="/products?badge=discount"
+        />
 
-          {/* New Arrivals */}
-          <ProductCarouselCardSection
-            badgeLabel={<FormattedMessage id="product.new" />}
-            badgeBg="bg-primary-600 text-white border-primary-700 dark:bg-primary-800 dark:text-primary-100"
-            title={intl.formatMessage({ id: "home.sections.new.title" })}
-            subtitle={intl.formatMessage({ id: "home.sections.new.subtitle" })}
-            products={newProducts}
-            viewAllHref="/products?badge=new"
-          />
-        </div>
+        {/* New Arrivals */}
+        <ProductCarouselCardSection
+          badgeLabel={<FormattedMessage id="product.new" />}
+          badgeBg="bg-primary-600 text-white border-primary-700 dark:bg-primary-800 dark:text-primary-100"
+          title={intl.formatMessage({ id: "home.sections.new.title" })}
+          subtitle={intl.formatMessage({ id: "home.sections.new.subtitle" })}
+          products={newProducts}
+          viewAllHref="/products?badge=new"
+        />
+      </div>
     </section>
   );
 };
