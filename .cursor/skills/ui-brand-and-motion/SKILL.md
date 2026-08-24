@@ -14,13 +14,13 @@ This skill enforces strict UI styling and animation standards for both **Antigra
 All UI updates, components, and layout styling **must strictly use the project's brand color tokens** declared in `src/index.css`. 
 
 ### Brand Palette Reference (`src/index.css`):
-- **Primary Color**: `#ebc9bf` (`var(--color-primary)` / CSS variables `--primary-*` shade palette: `50` to `950`, Tailwind classes: `bg-primary`, `text-primary`, `bg-primary-500`, `border-primary-400`, etc.)
-- **Secondary Color**: `#8e5954` (`var(--color-secondary)` / CSS variables `--secondary-*` shade palette: `50` to `950`, Tailwind classes: `bg-secondary`, `text-secondary`, `bg-secondary-600`, etc.)
+- **Primary Color**: `#fce6e9` (`var(--color-primary)` / CSS variables `--primary-*` shade palette: `50` to `950`, Tailwind classes: `bg-primary`, `text-primary`, `bg-primary-500`, `border-primary-400`, etc.)
+- **Secondary Color**: `#de7a87` (`var(--color-secondary)` / CSS variables `--secondary-*` shade palette: `50` to `950`, Tailwind classes: `bg-secondary`, `text-secondary`, `bg-secondary-600`, etc.)
 - **Tertiary Color**: `#5E6C84` (`var(--color-tertiary)` / CSS variables `--tertiary-*` shade palette: `50` to `950`, Tailwind classes: `bg-tertiary`, `text-tertiary`, `text-tertiary-500`, etc.)
 - **Neutral / Background**: `#F4F8FE` (`var(--color-neutral)` / Tailwind classes: `bg-neutral`, `bg-background`, `text-foreground`)
 
 ### Rules for UI Updates:
-1. **No Ad-hoc / Hardcoded Hex Colors**: Never use arbitrary inline styles (e.g. `style={{ color: '#123456' }}`) or arbitrary tailwind color classes (e.g. `bg-[#ebc9bf]` or `text-blue-500`) unless explicitly instructed by the user.
+1. **No Ad-hoc / Hardcoded Hex Colors**: Never use arbitrary inline styles (e.g. `style={{ color: '#123456' }}`) or arbitrary tailwind color classes (e.g. `bg-[#fce6e9]` or `text-blue-500`) unless explicitly instructed by the user.
 2. **Use Tailwind Token Classes**: Use theme utility classes such as `bg-primary`, `bg-primary-500`, `text-secondary`, `text-secondary-600`, `border-tertiary-200`, `bg-neutral`, `bg-background`, `text-foreground`.
 3. **Use CSS Variables when Writing CSS**: Use `var(--primary)`, `var(--secondary)`, `var(--tertiary)`, `var(--neutral)`, `var(--color-primary)`, `var(--color-secondary)` when working in `.css` or custom style modules.
 
