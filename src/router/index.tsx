@@ -3,6 +3,8 @@ import { RootLayout } from '@/layout/RootLayout'
 import AccountPage from '@/pages/AccountPage'
 import BodyCarePage from '@/pages/BodyCarePage'
 import CartPage from '@/pages/CartPage'
+import CheckoutPage from '@/pages/CheckoutPage'
+import OrderConfirmationPage from '@/pages/OrderConfirmationPage'
 import { HomePage } from '@/pages/HomePage'
 import HowToOrderPage from '@/pages/HowToOrderPage'
 import OffersPage from '@/pages/OffersPage'
@@ -26,6 +28,8 @@ const localeChildren = [
   { path: 'how-to-order', element: <HowToOrderPage /> },
   { path: 'wishlist', element: <WishlistPage /> },
   { path: 'cart', element: <CartPage /> },
+  { path: 'checkout', element: <CheckoutPage /> },
+  { path: 'order-confirmation/:orderId', element: <OrderConfirmationPage /> },
   { path: 'account', element: <AccountPage /> },
   { path: 'orders', element: <OrdersPage /> },
 ]

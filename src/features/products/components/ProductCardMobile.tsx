@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Carousel,
   CarouselContent,
@@ -22,6 +23,7 @@ import {
   LOCALE_DIR,
   type Locale,
 } from "@/i18n/locales";
+import { getLocalizedPath } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ProductCardProps } from "@/features/products/types/product";
 
@@ -66,6 +68,7 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
   reviewCount: propReviewCount,
   isFreeDelivery: propIsFreeDelivery,
   isFavorite: propIsFavorite,
+  isInCart: propIsInCart,
   currencySymbol = "جنيه",
   className,
   onAddToCart,
@@ -105,8 +108,10 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
   const reviewCount = product?.reviewCount ?? propReviewCount ?? 144;
   const isFreeDelivery = product?.isFreeDelivery ?? propIsFreeDelivery ?? true;
   const initialIsFavorite = product?.isFavorite ?? propIsFavorite ?? false;
+  const initialIsInCart = product?.isInCart ?? propIsInCart ?? false;
 
   const [favState, setFavState] = useState<boolean>(initialIsFavorite);
+  const [inCartState, setInCartState] = useState<boolean>(initialIsInCart);
   const [isAdded, setIsAdded] = useState<boolean>(false);
   const [api, setApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState<number>(0);
@@ -161,6 +166,16 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
     e.stopPropagation();
     const nextFav = !favState;
     setFavState(nextFav);
+    toast.success(
+      intl.formatMessage(
+        {
+          id: nextFav
+            ? "product.addedToWishlistSuccess"
+            : "product.removedFromWishlistSuccess",
+        },
+        { name: title },
+      ),
+    );
     if (onToggleFavorite) {
       onToggleFavorite(id, nextFav);
     }
@@ -169,7 +184,10 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1200);
+    setInCartState(true);
+    toast.success(
+      intl.formatMessage({ id: "products.addedSuccess" }, { name: title }),
+    );
     if (onAddToCart) {
       onAddToCart({
         id,
@@ -178,8 +196,10 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
         price,
         originalPrice,
         discountPercent,
+        isInCart: true,
       });
     }
+    navigate(getLocalizedPath("/cart", locale), { viewTransition: true });
   };
 
   const handleCardClick = () => {
@@ -201,12 +221,16 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
       dir={direction}
       onClick={handleCardClick}
       className={cn(
-        "group relative flex flex-col w-full bg-white dark:bg-neutral-900 rounded-lg border border-gray-200/80 dark:border-neutral-800 shadow-2xs overflow-hidden cursor-pointer select-none",
+        "group relative flex flex-col w-full bg-white dark:bg-neutral-900 rounded-lg border shadow-2xs overflow-hidden cursor-pointer select-none transition-all duration-200",
+        inCartState
+          ? "border-emerald-500/60 dark:border-emerald-500/50 ring-1 ring-emerald-500/20"
+          : "border-gray-200/80 dark:border-neutral-800",
         className,
       )}
     >
       {/* Edge-to-edge photo with no outer padding */}
       <div className="relative w-full aspect-square bg-gray-50/80 dark:bg-neutral-800/60 overflow-hidden flex items-center justify-center">
+        {/* Promotional Badge (Top Right) */}
         {badgeConfig && (
           <div className="absolute top-1.5 right-1.5 z-10">
             <span
@@ -216,6 +240,18 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
               )}
             >
               {badgeConfig.text}
+            </span>
+          </div>
+        )}
+
+        {/* In Cart Indicator Badge (Bottom Left) */}
+        {inCartState && (
+          <div className="absolute bottom-1.5 start-1.5 z-10">
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[8.5px] font-bold rounded bg-emerald-600/95 text-white shadow-2xs backdrop-blur-xs">
+              <Check className="w-2.5 h-2.5 stroke-[3]" />
+              <span>
+                <FormattedMessage id="product.inBag" defaultMessage="في الحقيبة" />
+              </span>
             </span>
           </div>
         )}
@@ -358,18 +394,33 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleAddClick}
-            aria-label={intl.formatMessage({ id: "product.addToBag" })}
+            aria-label={
+              inCartState
+                ? intl.formatMessage({ id: "product.addToBag", defaultMessage: "أضف المزيد إلى الحقيبة" })
+                : intl.formatMessage({ id: "product.addToBag", defaultMessage: "أضف إلى الحقيبة" })
+            }
+            title={
+              inCartState
+                ? intl.formatMessage({ id: "product.addToBag", defaultMessage: "أضف المزيد إلى الحقيبة" })
+                : intl.formatMessage({ id: "product.addToBag", defaultMessage: "أضف إلى الحقيبة" })
+            }
             className={cn(
-              "w-7 h-7 rounded-md shadow-2xs border transition-all duration-200 flex items-center justify-center focus:outline-none shrink-0 self-end",
+              "h-7 px-2 rounded-md shadow-2xs border transition-all duration-200 flex items-center justify-center gap-1 focus:outline-none shrink-0 self-end",
               isAdded
-                ? "bg-emerald-600 border-emerald-600 text-white"
-                : "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary-700",
+                ? "bg-emerald-600 border-emerald-600 text-white shadow-emerald-500/20"
+                : inCartState
+                  ? "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+                  : "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary-700",
             )}
           >
             {isAdded ? (
-              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+              <Check className="w-3 h-3 stroke-[2.5]" />
+            ) : inCartState ? (
+              <>
+                <Plus className="w-3 h-3 stroke-[2.5]" />
+              </>
             ) : (
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <Plus className="w-3 h-3 stroke-[2.5]" />
             )}
           </motion.button>
         </div>

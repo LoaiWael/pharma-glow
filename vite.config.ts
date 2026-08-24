@@ -18,9 +18,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.webp', 'robots.txt'],
       manifest: {
-        name: 'Pharma Glow',
-        short_name: 'PharmaGlow',
-        description: 'متجر فارما جلو لمنتجات العناية بالبشرة والجمال',
+        name: 'Pure',
+        short_name: 'Pure',
+        description: 'متجر بيور لمنتجات العناية بالبشرة والجمال',
         theme_color: '#ebc9bf',
         background_color: '#ffffff',
         display: 'standalone',

@@ -247,7 +247,7 @@ const CardNav = ({
                 src={logo}
                 alt=""
                 className={cn(
-                  'logo h-9 w-9 rounded-full border-2 border-secondary/30 ring-2 ring-primary/50 object-cover shrink-0 p-0.5 shadow-xs',
+                  'logo h-9 w-9 rounded-full border-2 border-secondary/30 ring-2 ring-primary/50 object-cover shrink-0 p-0 shadow-xs',
                   logoClassName
                 )}
               />

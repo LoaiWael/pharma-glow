@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { ShoppingBag, Zap, Check, Plus, Minus } from "lucide-react";
 import { useIntl } from "react-intl";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ interface ProductBuyBoxProps {
   product: Product;
   selectedVolume?: string;
   onAddToCart?: (product: Product, quantity: number) => void;
+  onViewCart?: () => void;
   onBuyNow?: (product: Product, quantity: number) => void;
   className?: string;
 }
@@ -16,12 +17,14 @@ interface ProductBuyBoxProps {
 export const ProductBuyBox: React.FC<ProductBuyBoxProps> = ({
   product,
   onAddToCart,
+  onViewCart,
   onBuyNow,
   className,
 }) => {
   const intl = useIntl();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [inCartState, setInCartState] = useState<boolean>(product.isInCart ?? false);
 
   const price = product.price;
   const originalPrice = product.originalPrice;
@@ -37,8 +40,13 @@ export const ProductBuyBox: React.FC<ProductBuyBoxProps> = ({
   };
 
   const handleAdd = () => {
+    if (inCartState) {
+      onViewCart?.();
+      return;
+    }
     setIsAdded(true);
-    onAddToCart?.(product, quantity);
+    setInCartState(true);
+    onAddToCart?.({ ...product, isInCart: true }, quantity);
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
@@ -134,24 +142,46 @@ export const ProductBuyBox: React.FC<ProductBuyBoxProps> = ({
 
       {/* Action Buttons: Add to Bag & Buy Now */}
       <div className="flex flex-col gap-2.5 pt-1">
+        {inCartState && (
+          <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">
+            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+            <span>
+              {intl.formatMessage({
+                id: "product.alreadyInCartNotice",
+                defaultMessage: "هذا المنتج موجود بالفعل في حقيبة التسوق الخاصة بك",
+              })}
+            </span>
+          </div>
+        )}
+
         <motion.button
           type="button"
           whileTap={{ scale: 0.98 }}
           onClick={handleAdd}
           className={cn(
             "w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer",
-            isAdded
+            isAdded || inCartState
               ? "bg-emerald-600 text-white shadow-emerald-500/20"
               : "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-secondary/20",
           )}
         >
           {isAdded ? (
             <>
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 stroke-[2.5]" />
               <span>
                 {intl.formatMessage({
                   id: "product.addedToBagSuccess",
                   defaultMessage: "تمت الإضافة إلى الحقيبة",
+                })}
+              </span>
+            </>
+          ) : inCartState ? (
+            <>
+              <ShoppingBag className="w-4 h-4" />
+              <span>
+                {intl.formatMessage({
+                  id: "product.viewBag",
+                  defaultMessage: "عرض الحقيبة",
                 })}
               </span>
             </>
@@ -168,20 +198,28 @@ export const ProductBuyBox: React.FC<ProductBuyBoxProps> = ({
           )}
         </motion.button>
 
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.98 }}
-          onClick={handleBuy}
-          className="w-full py-3 px-4 rounded-xl font-bold text-sm border-2 border-secondary text-secondary hover:bg-secondary/10 flex items-center justify-center gap-2 transition-colors cursor-pointer"
-        >
-          <Zap className="w-4 h-4 fill-secondary" />
-          <span>
-            {intl.formatMessage({
-              id: "product.buyNow",
-              defaultMessage: "اشتري الآن",
-            })}
-          </span>
-        </motion.button>
+        <AnimatePresence>
+          {!inCartState && (
+            <motion.button
+              type="button"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleBuy}
+              className="w-full py-3 px-4 rounded-xl font-bold text-sm border-2 border-secondary text-secondary hover:bg-secondary/10 flex items-center justify-center gap-2 transition-colors cursor-pointer overflow-hidden"
+            >
+              <Zap className="w-4 h-4 fill-secondary" />
+              <span>
+                {intl.formatMessage({
+                  id: "product.buyNow",
+                  defaultMessage: "اشتري الآن",
+                })}
+              </span>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

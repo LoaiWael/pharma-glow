@@ -1,6 +1,6 @@
 # AI Agent Guidelines & Architecture Rules
 
-This document outlines the architecture, coding standards, component patterns, and feature module structure for **Pharma Glow**. All AI agents working on this codebase must adhere strictly to these rules.
+This document outlines the architecture, coding standards, component patterns, and feature module structure for **Pure**. All AI agents working on this codebase must adhere strictly to these rules.
 
 ---
 

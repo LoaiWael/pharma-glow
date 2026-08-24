@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useIntl } from "react-intl";
+import { toast } from "sonner";
 import {
   ChevronLeft,
   ChevronRight,
@@ -22,9 +23,11 @@ import {
   type Product,
 } from "@/features/products";
 import { DEFAULT_LOCALE, isLocale, LOCALE_DIR } from "@/i18n/locales";
+import { getLocalizedPath } from "@/i18n/navigation";
 
 export const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const intl = useIntl();
   const locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
   const isRtl = LOCALE_DIR[locale] === "rtl";
@@ -121,20 +124,52 @@ export const ProductDetailsPage: React.FC = () => {
         ? "/bodycare"
         : "/products";
 
-  const handleAddToCart = (item: Product, qty: number) => {
-    console.log("Adding to cart:", item.title, "Qty:", qty);
-  };
-
-  const handleBuyNow = (item: Product, qty: number) => {
-    console.log("Buy now initiated:", item.title, "Qty:", qty);
-  };
-
-  const handleAddBundleToCart = (bundle: Product[]) => {
-    console.log("Adding bundle to cart:", bundle);
-  };
-
   const productTitle =
     locale === "ar" && product.titleAr ? product.titleAr : product.title;
+
+  const cartPath = getLocalizedPath("/cart", locale);
+
+  const handleViewCart = () => {
+    navigate(cartPath, { viewTransition: true });
+  };
+
+  const handleAddToCart = (item: Product) => {
+    const name =
+      locale === "ar" && item.titleAr ? item.titleAr : item.title;
+    toast.success(
+      intl.formatMessage({ id: "products.addedSuccess" }, { name }),
+    );
+    navigate(cartPath, { viewTransition: true });
+  };
+
+  const handleBuyNow = () => {
+    navigate(cartPath, { viewTransition: true });
+  };
+
+  const handleAddBundleToCart = () => {
+    toast.success(
+      intl.formatMessage({
+        id: "product.bundle.added",
+        defaultMessage: "تمت إضافة الروتين للحقيبة",
+      }),
+    );
+    navigate(cartPath, { viewTransition: true });
+  };
+
+  const handleToggleFavorite = () => {
+    const nextFav = !isFav;
+    setIsFav(nextFav);
+    toast.success(
+      intl.formatMessage(
+        {
+          id: nextFav
+            ? "product.addedToWishlistSuccess"
+            : "product.removedFromWishlistSuccess",
+        },
+        { name: productTitle },
+      ),
+    );
+  };
 
   return (
     <div className="min-h-screen bg-neutral/30 pb-24 lg:pb-16">
@@ -198,7 +233,7 @@ export const ProductDetailsPage: React.FC = () => {
               badge={product.badge}
               badgeText={product.badgeText}
               isFavorite={isFav}
-              onToggleFavorite={() => setIsFav(!isFav)}
+              onToggleFavorite={handleToggleFavorite}
             />
           </div>
 
@@ -210,9 +245,11 @@ export const ProductDetailsPage: React.FC = () => {
               onSelectVolume={setSelectedVolume}
             />
             <ProductBuyBox
+              key={product.id}
               product={product}
               selectedVolume={selectedVolume}
               onAddToCart={handleAddToCart}
+              onViewCart={handleViewCart}
               onBuyNow={handleBuyNow}
             />
           </div>
@@ -243,8 +280,10 @@ export const ProductDetailsPage: React.FC = () => {
 
       {/* Fixed Sticky Action Bar on Small/Mobile Screens */}
       <MobileStickyBottomBar
+        key={product.id}
         product={product}
         onAddToCart={handleAddToCart}
+        onViewCart={handleViewCart}
         onBuyNow={handleBuyNow}
       />
     </div>

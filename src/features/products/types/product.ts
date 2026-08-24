@@ -42,6 +42,7 @@ export interface Product {
   reviewCount?: number; // e.g. 144
   isFreeDelivery?: boolean;
   isFavorite?: boolean;
+  isInCart?: boolean;
   inStock?: boolean;
   stockCount?: number;
   volume?: string;
@@ -83,6 +84,7 @@ export interface ProductCardProps {
   reviewCount?: number;
   isFreeDelivery?: boolean;
   isFavorite?: boolean;
+  isInCart?: boolean;
   currencySymbol?: string;
   className?: string;
   // Event handlers

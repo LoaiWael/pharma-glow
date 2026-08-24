@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { ShoppingBag, Zap, Check, Plus, Minus } from "lucide-react";
 import { useIntl } from "react-intl";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import type { Product } from "@/features/products/types/product";
 interface MobileStickyBottomBarProps {
   product: Product;
   onAddToCart?: (product: Product, quantity: number) => void;
+  onViewCart?: () => void;
   onBuyNow?: (product: Product, quantity: number) => void;
   className?: string;
 }
@@ -15,12 +16,14 @@ interface MobileStickyBottomBarProps {
 export const MobileStickyBottomBar: React.FC<MobileStickyBottomBarProps> = ({
   product,
   onAddToCart,
+  onViewCart,
   onBuyNow,
   className,
 }) => {
   const intl = useIntl();
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [inCartState, setInCartState] = useState<boolean>(product.isInCart ?? false);
 
   const price = product.price;
   const originalPrice = product.originalPrice;
@@ -35,8 +38,13 @@ export const MobileStickyBottomBar: React.FC<MobileStickyBottomBarProps> = ({
   };
 
   const handleAdd = () => {
+    if (inCartState) {
+      onViewCart?.();
+      return;
+    }
     setIsAdded(true);
-    onAddToCart?.(product, quantity);
+    setInCartState(true);
+    onAddToCart?.({ ...product, isInCart: true }, quantity);
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
@@ -107,14 +115,19 @@ export const MobileStickyBottomBar: React.FC<MobileStickyBottomBarProps> = ({
         </div>
 
         {/* Row 2: Full Width Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 w-full">
+        <div
+          className={cn(
+            "grid gap-2 w-full",
+            inCartState ? "grid-cols-1" : "grid-cols-2",
+          )}
+        >
           <motion.button
             type="button"
             whileTap={{ scale: 0.97 }}
             onClick={handleAdd}
             className={cn(
               "w-full py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs",
-              isAdded
+              isAdded || inCartState
                 ? "bg-emerald-600 text-white"
                 : "bg-secondary text-secondary-foreground hover:bg-secondary/90",
             )}
@@ -126,6 +139,16 @@ export const MobileStickyBottomBar: React.FC<MobileStickyBottomBarProps> = ({
                   {intl.formatMessage({
                     id: "product.addedToBagSuccess",
                     defaultMessage: "تمت الإضافة",
+                  })}
+                </span>
+              </>
+            ) : inCartState ? (
+              <>
+                <ShoppingBag className="w-4 h-4 shrink-0" />
+                <span className="truncate">
+                  {intl.formatMessage({
+                    id: "product.viewBag",
+                    defaultMessage: "عرض الحقيبة",
                   })}
                 </span>
               </>
@@ -142,20 +165,28 @@ export const MobileStickyBottomBar: React.FC<MobileStickyBottomBarProps> = ({
             )}
           </motion.button>
 
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.97 }}
-            onClick={handleBuy}
-            className="w-full py-3 px-3 rounded-xl font-bold text-xs border-2 border-secondary text-secondary hover:bg-secondary/10 flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <Zap className="w-4 h-4 fill-secondary shrink-0" />
-            <span>
-              {intl.formatMessage({
-                id: "product.quickBuy",
-                defaultMessage: "شراء فوري",
-              })}
-            </span>
-          </motion.button>
+          <AnimatePresence>
+            {!inCartState && (
+              <motion.button
+                type="button"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleBuy}
+                className="w-full py-3 px-3 rounded-xl font-bold text-xs border-2 border-secondary text-secondary hover:bg-secondary/10 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Zap className="w-4 h-4 fill-secondary shrink-0" />
+                <span>
+                  {intl.formatMessage({
+                    id: "product.quickBuy",
+                    defaultMessage: "شراء فوري",
+                  })}
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

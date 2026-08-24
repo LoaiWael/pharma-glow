@@ -10,6 +10,8 @@ import { PromoTicker } from '@/layout/PromoTicker'
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@/i18n/locales'
 import type { MessageKey } from '@/i18n/messages/en'
 import { getLocalizedPath } from '@/i18n/navigation'
+import { useCart } from '@/features/cart'
+import { useWishlist } from '@/features/wishlist'
 import { NavActions, NavSearch } from '@/layout/NavActions'
 
 export const Header = () => {
@@ -85,6 +87,12 @@ export const Header = () => {
     ]
   }, [intl, locale])
 
+  const { data: cart } = useCart()
+  const { data: wishlist } = useWishlist()
+
+  const cartCount = cart?.items.reduce((total, item) => total + (item.quantity || 1), 0) ?? 0
+  const wishlistCount = wishlist?.items.length ?? 0
+
   return (
     <header className="sticky top-0 z-50 w-full rounded-none">
       <PromoTicker />
@@ -136,6 +144,11 @@ export const Header = () => {
                       {intl.formatMessage({ id: 'nav.wishlist' })}
                     </span>
                   </div>
+                  {wishlistCount > 0 && (
+                    <span className="flex min-w-5 h-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-bold text-white shadow-xs">
+                      {wishlistCount > 99 ? '99+' : wishlistCount}
+                    </span>
+                  )}
                 </Link>
 
                 <Link
@@ -153,6 +166,11 @@ export const Header = () => {
                       {intl.formatMessage({ id: 'nav.cart' })}
                     </span>
                   </div>
+                  {cartCount > 0 && (
+                    <span className="flex min-w-5 h-5 items-center justify-center rounded-full bg-secondary px-1.5 text-xs font-bold text-secondary-foreground shadow-xs">
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
                 </Link>
               </div>
             )}

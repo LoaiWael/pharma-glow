@@ -22,7 +22,7 @@ export const ProductOverviewTabs: React.FC<ProductOverviewTabsProps> = ({
 
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
-  const brandName = isArabic && product.brandAr ? product.brandAr : product.brand || "Pharma Glow";
+  const brandName = isArabic && product.brandAr ? product.brandAr : product.brand || "Pure";
   
   const categoryLabel =
     product.category === "skin_care"

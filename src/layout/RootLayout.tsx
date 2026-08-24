@@ -1,6 +1,7 @@
 import { useLayoutEffect } from "react";
 import { IntlProvider } from "react-intl";
 import { Outlet, useParams } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 import {
   DEFAULT_LOCALE,
   isLocale,
@@ -25,6 +26,8 @@ export const RootLayout = ({ forcedLocale }: RootLayoutProps) => {
     document.documentElement.dir = LOCALE_DIR[activeLocale];
   }, [activeLocale]);
 
+  const direction = LOCALE_DIR[activeLocale];
+
   return (
     <IntlProvider
       defaultLocale={DEFAULT_LOCALE}
@@ -39,6 +42,12 @@ export const RootLayout = ({ forcedLocale }: RootLayoutProps) => {
           </main>
         </div>
         <Footer />
+        <Toaster
+          dir={direction}
+          position="top-center"
+          richColors
+          closeButton
+        />
       </div>
     </IntlProvider>
   );

@@ -36,36 +36,36 @@
   }
 
   /* Base Brand Colors */
-  --color-primary: #ebc9bf;
-  --color-secondary: #8e5954;
+  --color-primary: #fce6e9;
+  --color-secondary: #de7a87;
   --color-tertiary: #5e6c84;
   --color-neutral: #f4f8fe;
 
-  /* Primary Shades (#ebc9bf) */
-  --primary-50: #fdfbfb;
-  --primary-100: #fbf4f2;
-  --primary-200: #f6e6e2;
-  --primary-300: #f1d8cf;
-  --primary-400: #ebc9bf;
-  --primary-500: #d9a89b;
-  --primary-600: #c18475;
-  --primary-700: #a26556;
-  --primary-800: #855044;
-  --primary-900: #6d433b;
-  --primary-950: #3a201b;
+  /* Primary Shades (#fce6e9) */
+  --primary-50: #fff7f8;
+  --primary-100: #fce6e9;
+  --primary-200: #fad1d8;
+  --primary-300: #f6b2bd;
+  --primary-400: #ee8596;
+  --primary-500: #e2586e;
+  --primary-600: #cd3952;
+  --primary-700: #ab283e;
+  --primary-800: #8e2536;
+  --primary-900: #772330;
+  --primary-950: #420e18;
 
-  /* Secondary Shades (#8e5954) */
-  --secondary-50: #f9f5f5;
-  --secondary-100: #f1e7e6;
-  --secondary-200: #e3d2d0;
-  --secondary-300: #ceb2af;
-  --secondary-400: #b58d88;
-  --secondary-500: #9d6d67;
-  --secondary-600: #8e5954;
-  --secondary-700: #754743;
-  --secondary-800: #623d3a;
-  --secondary-900: #543734;
-  --secondary-950: #2d1a18;
+  /* Secondary Shades (#de7a87) */
+  --secondary-50: #fcf6f7;
+  --secondary-100: #faecee;
+  --secondary-200: #f5d9dd;
+  --secondary-300: #ecb9c0;
+  --secondary-400: #de7a87;
+  --secondary-500: #cc5b6a;
+  --secondary-600: #b64353;
+  --secondary-700: #983442;
+  --secondary-800: #7e2e38;
+  --secondary-900: #6b2931;
+  --secondary-950: #3b1116;
 
   /* Tertiary Shades (#5E6C84) */
   --tertiary-50: #f4f6f8;
@@ -89,10 +89,10 @@
   --popover: #ffffff;
   --popover-foreground: #000000;
 
-  --primary: #ebc9bf;
-  --primary-foreground: #ffffff;
+  --primary: #fce6e9;
+  --primary-foreground: #420e18;
 
-  --secondary: #8e5954;
+  --secondary: #de7a87;
   --secondary-foreground: #ffffff;
 
   --tertiary: #5e6c84;
@@ -104,14 +104,14 @@
   --muted: #f4f8fe;
   --muted-foreground: #5e6c84;
 
-  --accent: #8e5954;
+  --accent: #de7a87;
   --accent-foreground: #ffffff;
 
   --destructive: oklch(0.577 0.245 27.325);
 
   --input: oklch(0.922 0 0);
 
-  --ring: #8e5954;
+  --ring: #de7a87;
 
   --chart-1: #0c0a28;
   --chart-2: #1190cf;

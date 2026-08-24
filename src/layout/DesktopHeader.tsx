@@ -98,7 +98,7 @@ export const DesktopHeader = () => {
               <motion.img
                 src={logo}
                 alt=""
-                className="h-10 w-10 rounded-full border-2 border-secondary/30 ring-2 ring-primary/50 object-cover shrink-0 p-0.5 shadow-xs"
+                className="h-10 w-10 rounded-full border-2 border-secondary/30 ring-2 ring-primary/50 object-cover shrink-0 p-0 shadow-xs"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               />

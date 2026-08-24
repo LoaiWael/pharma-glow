@@ -1,16 +1,12 @@
-import { FormattedMessage } from 'react-intl'
+import { OrdersView } from '@/features/orders'
+import { useEffect } from 'react'
 
 const OrdersPage = () => {
-  return (
-    <section className="py-12">
-      <h1>
-        <FormattedMessage id="orders.title" />
-      </h1>
-      <p className="mt-3 text-tertiary">
-        <FormattedMessage id="orders.placeholder" />
-      </p>
-    </section>
-  )
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }, [])
+
+  return <OrdersView />
 }
 
 export default OrdersPage

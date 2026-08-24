@@ -1,16 +1,12 @@
-import { FormattedMessage } from 'react-intl'
+import { AccountView } from '@/features/account'
+import { useEffect } from 'react'
 
 const AccountPage = () => {
-  return (
-    <section className="py-12">
-      <h1>
-        <FormattedMessage id="account.title" />
-      </h1>
-      <p className="mt-3 text-tertiary">
-        <FormattedMessage id="account.placeholder" />
-      </p>
-    </section>
-  )
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }, [])
+
+  return <AccountView />
 }
 
 export default AccountPage

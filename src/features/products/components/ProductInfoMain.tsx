@@ -34,7 +34,7 @@ export const ProductInfoMain: React.FC<ProductInfoMainProps> = ({
   const brand =
     isArabic && product.brandAr
       ? product.brandAr
-      : product.brand || "Pharma Glow";
+      : product.brand || "Pure";
   const rating = product.rating ?? 4.8;
   const reviewCount = product.reviewCount ?? 120;
   const volumeOptions =

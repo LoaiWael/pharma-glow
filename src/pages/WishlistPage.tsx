@@ -1,4 +1,4 @@
-import { WishlistEmptyState } from "@/features/wishlist";
+import { WishlistView } from "@/features/wishlist";
 import { useEffect } from "react";
 
 const WishlistPage = () => {
@@ -6,11 +6,7 @@ const WishlistPage = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
-  return (
-    <section className="flex min-h-[65vh] items-center justify-center py-12">
-      <WishlistEmptyState />
-    </section>
-  );
+  return <WishlistView />;
 };
 
 export default WishlistPage;

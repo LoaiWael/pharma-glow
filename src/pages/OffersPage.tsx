@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Sparkles, Filter, Tag } from "lucide-react";
+import { Filter, Tag } from "lucide-react";
 import { FormattedMessage } from "react-intl";
 import {
   useProducts,
@@ -42,8 +42,6 @@ export const OffersPage: React.FC = () => {
       | "price_desc"
       | "rating"
       | "discount") || "featured";
-
-  const [addedItemName, setAddedItemName] = useState<string | null>(null);
 
   // Local state initialized / synced with URL
   const [searchQuery, setSearchQuery] = useState<string>(urlSearchQuery);
@@ -143,9 +141,8 @@ export const OffersPage: React.FC = () => {
     minRating > 0 ||
     sortBy !== "featured";
 
-  const handleAddToCart = (product: Partial<Product>) => {
-    setAddedItemName(product.title || "المنتج");
-    setTimeout(() => setAddedItemName(null), 2500);
+  const handleAddToCart = (_product: Partial<Product>) => {
+    // Cart persistence handled elsewhere; Sonner toast is shown from ProductCard.
   };
 
   const { data: filteredProducts = [] } = useProducts({
@@ -163,27 +160,6 @@ export const OffersPage: React.FC = () => {
       className="min-h-screen bg-gray-50/60 dark:bg-neutral-950 py-8 pb-24 lg:pb-8"
     >
       <div className="page-shell mx-auto space-y-8">
-        {/* Toast Alert for Cart addition */}
-        <AnimatePresence>
-          {addedItemName && (
-            <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold"
-            >
-              <Sparkles className="w-4 h-4 text-yellow-400" />
-              <span>
-                <FormattedMessage
-                  id="products.addedSuccess"
-                  values={{ name: addedItemName }}
-                />
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Page Header Banner */}
         <PageFadeIn
           yOffset={14}

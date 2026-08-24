@@ -52,7 +52,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
       date: "منذ أسبوع",
       title: "أصلي وتوصيل سريع جداً",
       comment:
-        "التغليف ممتاز والمنتج أصلي 100%. وصلني ثاني يوم مباشرة، تجربة شراء ممتازة من فارما جلو.",
+        "التغليف ممتاز والمنتج أصلي 100%. وصلني ثاني يوم مباشرة، تجربة شراء ممتازة من بيور.",
       isVerifiedPurchase: true,
       helpfulCount: 9,
     },
