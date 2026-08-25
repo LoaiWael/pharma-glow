@@ -3,6 +3,7 @@ import { FileText, Sparkles, HelpCircle, ShieldCheck } from "lucide-react";
 import { useIntl } from "react-intl";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/features/products/types/product";
+import { useProductTypes } from "@/features/products/api/use-product-types";
 import { DEFAULT_LOCALE, isLocale } from "@/i18n/locales";
 
 interface ProductOverviewTabsProps {
@@ -22,6 +23,8 @@ export const ProductOverviewTabs: React.FC<ProductOverviewTabsProps> = ({
 
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
+  const { data: productTypes = [] } = useProductTypes();
+
   const brandName = isArabic && product.brandAr ? product.brandAr : product.brand || "Pure";
   
   const categoryLabel =
@@ -32,21 +35,9 @@ export const ProductOverviewTabs: React.FC<ProductOverviewTabsProps> = ({
       : intl.formatMessage({ id: "products.filter.all", defaultMessage: "جميع المنتجات" });
 
   const productTypeLabel =
-    product.productType === "serum"
-      ? intl.formatMessage({ id: "products.filters.type.serum", defaultMessage: "سيروم" })
-      : product.productType === "cleanser"
-      ? intl.formatMessage({ id: "products.filters.type.cleanser", defaultMessage: "غسول / منظف" })
-      : product.productType === "sunscreen"
-      ? intl.formatMessage({ id: "products.filters.type.sunscreen", defaultMessage: "واقي شمس" })
-      : product.productType === "cream"
-      ? intl.formatMessage({ id: "products.filters.type.cream", defaultMessage: "كريم" })
-      : product.productType === "lotion"
-      ? intl.formatMessage({ id: "products.filters.type.lotion", defaultMessage: "لوشن" })
-      : product.productType === "oil"
-      ? intl.formatMessage({ id: "products.filters.type.oil", defaultMessage: "زيت مغذي" })
-      : product.productType === "scrub"
-      ? intl.formatMessage({ id: "products.filters.type.scrub", defaultMessage: "مقشر" })
-      : product.productType || "-";
+    productTypes.find((type) => type.slug === product.productType)?.name ||
+    product.productType ||
+    "-";
 
   const specifications: Record<string, string> = {
     [intl.formatMessage({ id: "product.tabs.brand", defaultMessage: "العلامة التجارية" })]: brandName,

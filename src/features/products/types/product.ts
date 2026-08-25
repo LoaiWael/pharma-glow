@@ -1,5 +1,14 @@
 export type ProductCategory = "skin_care" | "body_care" | "hair_care" | "makeup" | string;
-export type ProductType = "all" | "serum" | "cream" | "cleanser" | "sunscreen" | "oil" | "scrub" | "lotion" | "gel" | "butter" | "toner" | "set";
+/** Product type slug from `/api/v1/product-types`, plus `"all"` for unfiltered. */
+export type ProductType = "all" | (string & {});
+
+/** Catalog product type from the dashboard-managed API. */
+export interface CatalogProductType {
+  id: number;
+  name: string;
+  slug: string;
+  sortOrder: number;
+}
 
 export interface ProductFilterState {
   searchQuery: string;
@@ -25,6 +34,8 @@ export interface ProductReview {
 
 export interface Product {
   id: string | number;
+  slug?: string;
+  sku?: string;
   title: string;
   titleAr?: string;
   brand?: string;
@@ -55,6 +66,7 @@ export interface Product {
   overviewHighlightsAr?: string[];
   howToUse?: string;
   howToUseAr?: string;
+  isFeatured?: boolean;
   specifications?: Record<string, string>;
   specificationsAr?: Record<string, string>;
   ratingBreakdown?: {

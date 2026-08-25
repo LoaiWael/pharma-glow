@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { getAccountDisplayName, getAccountInitials, MOCK_PROFILE, useAccount } from '@/features/account'
+import { useLogout } from '@/features/auth'
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@/i18n/locales'
 import { getLocalizedPath } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
@@ -22,6 +23,7 @@ export const ProfileMenu = () => {
   const intl = useIntl()
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE
   const { data: profile } = useAccount()
+  const logout = useLogout()
   const accountPath = getLocalizedPath('/account', locale)
   const ordersPath = getLocalizedPath('/orders', locale)
   const memberProfile = profile ?? MOCK_PROFILE
@@ -35,7 +37,11 @@ export const ProfileMenu = () => {
       action: {
         label: intl.formatMessage({ id: 'nav.logoutConfirmAction' }),
         onClick: () => {
-          toast.success(intl.formatMessage({ id: 'nav.logoutSuccess' }))
+          logout.mutate(undefined, {
+            onSuccess: () => {
+              toast.success(intl.formatMessage({ id: 'nav.logoutSuccess' }))
+            },
+          })
         },
       },
     })

@@ -1,5 +1,5 @@
 import { type FormEvent, useMemo, useRef, useState } from "react";
-import { ArrowRight, Heart, Search, ShoppingBag, Sparkles, X } from "lucide-react";
+import { ArrowRight, Heart, LogIn, Search, ShoppingBag, Sparkles, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useIntl } from "react-intl";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "@/features/auth";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { getLocalizedPath } from "@/i18n/navigation";
 import { useCart } from "@/features/cart";
@@ -199,7 +200,7 @@ export const NavSearch = () => {
                       {displayedProducts.map((product) => {
                         const title = isRtl && product.titleAr ? product.titleAr : product.title;
                         const brand = isRtl && product.brandAr ? product.brandAr : product.brand;
-                        const productUrl = `${getLocalizedPath(`/products/${product.id}`, locale)}`;
+                        const productUrl = `${getLocalizedPath(`/products/${product.slug ?? product.id}`, locale)}`;
 
                         return (
                           <Link
@@ -281,10 +282,8 @@ export const NavSearch = () => {
 
 export const NavActions = () => {
   const intl = useIntl();
-  // const { pathname } = useLocation();
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
-  // const nextLocale: Locale = locale === "en" ? "ar" : "en";
-  // const switchedPath = getLocalizedPath(pathname, nextLocale);
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
   const { data: cart } = useCart();
   const { data: wishlist } = useWishlist();
@@ -295,21 +294,6 @@ export const NavActions = () => {
 
   return (
     <>
-      {/* <Link
-        to={switchedPath}
-        aria-label={nextLocale === 'en' ? 'Switch to English' : 'التبديل إلى العربية'}
-        viewTransition={true}
-      >
-        <motion.span
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-secondary hover:bg-primary/70 hover:text-secondary"
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.92 }}
-        >
-          <Globe className="size-4" aria-hidden="true" />
-          <FormattedMessage id="nav.language" />
-        </motion.span>
-      </Link> */}
-
       <Link
         to={getLocalizedPath("/wishlist", locale)}
         aria-label={intl.formatMessage({ id: "nav.wishlist" })}
@@ -350,7 +334,23 @@ export const NavActions = () => {
         </motion.span>
       </Link>
 
-      <ProfileMenu />
+      {!isAuthLoading &&
+        (isAuthenticated ? (
+          <ProfileMenu />
+        ) : (
+          <Link to={getLocalizedPath("/login", locale)} viewTransition={true}>
+            <motion.span
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-secondary/40 bg-transparent px-3 text-xs font-semibold text-secondary transition-colors hover:border-secondary hover:bg-primary/50"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+            >
+              <LogIn className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">
+                {intl.formatMessage({ id: "nav.login" })}
+              </span>
+            </motion.span>
+          </Link>
+        ))}
     </>
   );
 };

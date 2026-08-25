@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { Star, ChevronLeft, ChevronRight, Home } from "lucide-react";
-import { useProduct, ProductReviewsSection } from "@/features/products";
+import { useProduct, ProductReviewsSection, ProductDetailSkeleton, ProductEmptyState } from "@/features/products";
 import { isLocale, DEFAULT_LOCALE, LOCALE_DIR } from "@/i18n/locales";
 
 export const ProductReviewsPage: React.FC = () => {
@@ -11,26 +11,26 @@ export const ProductReviewsPage: React.FC = () => {
   const locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
   const isRtl = LOCALE_DIR[locale] === "rtl";
 
-  const { data: product, isLoading } = useProduct(id || "p1");
+  const { data: product, isPending, isError } = useProduct(id || "");
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [id]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <main className="min-h-screen bg-neutral/20 py-8 lg:py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl animate-pulse flex flex-col gap-6">
-          <div className="h-6 w-48 bg-gray-200 dark:bg-neutral-800 rounded-md" />
-          <div className="h-32 bg-gray-200 dark:bg-neutral-800 rounded-3xl" />
-          <div className="h-96 bg-gray-200 dark:bg-neutral-800 rounded-3xl" />
-        </div>
+        <ProductDetailSkeleton />
       </main>
     );
   }
 
-  if (!product) {
-    return null;
+  if (isError || !product) {
+    return (
+      <main className="min-h-screen bg-neutral/20 py-8 lg:py-12">
+        <ProductEmptyState />
+      </main>
+    );
   }
 
   const categoryName =

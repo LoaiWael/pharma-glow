@@ -15,7 +15,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { mockMediaReviews } from "@/features/reviews/data/mockReviews";
-import { mockProducts } from "@/features/products/data/mockProducts";
 import { HomeReviewsSection } from "@/features/reviews/components/HomeReviewsSection";
 import {
   DropdownMenu,
@@ -43,19 +42,22 @@ export const ReviewsPage: React.FC = () => {
   const [selectedRating, setSelectedRating] = useState<number | "all">("all");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
 
-  // Aggregate all product reviews into a unified flat list
+  // Aggregate media reviews into the product-reviews tab until a reviews API exists.
   const productReviewsList = useMemo(() => {
-    return mockProducts.flatMap((p) => {
-      const pReviews = p.reviews || [];
-      return pReviews.map((rev) => ({
-        ...rev,
-        productId: p.id,
-        productTitle: isRtl ? p.titleAr || p.title : p.title,
-        productImage: p.image,
-        productBrand: isRtl ? p.brandAr || p.brand : p.brand,
-      }));
-    });
-  }, [isRtl]);
+    return mockMediaReviews.map((item) => ({
+      id: item.id,
+      author: item.authorName,
+      rating: item.rating,
+      date: item.date ?? "",
+      comment: item.caption ?? "",
+      isVerifiedPurchase: item.verifiedPurchase,
+      productId: item.productId,
+      productTitle: item.productName,
+      productImage: item.productImage,
+      productBrand: undefined as string | undefined,
+      title: undefined as string | undefined,
+    }));
+  }, []);
 
   // Filter media reviews
   const filteredMediaReviews = useMemo(() => {

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useMemo, type FormEvent } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import {
@@ -7,20 +7,24 @@ import {
   Truck,
   Headphones,
   CreditCard,
-  Mail,
-  Phone,
-  Clock,
-  MapPin,
   Heart,
   ArrowUp,
   Check,
 } from 'lucide-react'
 import {
-  SiInstagram,
-  SiFacebook,
-  SiX,
-  SiYoutube,
-} from 'react-icons/si'
+  FaLocationDot,
+  FaPhone,
+  FaEnvelope,
+  FaClock,
+  FaWhatsapp,
+  FaInstagram,
+  FaFacebookF,
+  FaXTwitter,
+  FaTiktok,
+  FaSnapchat,
+  FaLinkedinIn,
+  FaYoutube,
+} from 'react-icons/fa6'
 
 import { motion } from 'motion/react'
 import logo from '@/assets/logo.webp'
@@ -28,12 +32,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DEFAULT_LOCALE, isLocale, LOCALE_DIR, type Locale } from '@/i18n/locales'
 import { getLocalizedPath } from '@/i18n/navigation'
+import { useContactSettings } from '@/features/contact'
 
 export const Footer = () => {
   const intl = useIntl()
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE
   const direction = LOCALE_DIR[locale]
-  const brandName = intl.formatMessage({ id: 'brand.name' })
+  const { data: contact } = useContactSettings()
+  const brandName = contact?.appName || intl.formatMessage({ id: 'brand.name' })
 
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
@@ -102,12 +108,42 @@ export const Footer = () => {
     { label: intl.formatMessage({ id: 'nav.cart' }), href: getLocalizedPath('/cart', locale) },
   ]
 
-  const socialLinks = [
-    { name: 'Instagram', icon: SiInstagram, href: 'https://instagram.com' },
-    { name: 'Facebook', icon: SiFacebook, href: 'https://facebook.com' },
-    { name: 'X', icon: SiX, href: 'https://x.com' },
-    { name: 'YouTube', icon: SiYoutube, href: 'https://youtube.com' },
-  ]
+  const socialLinks = useMemo(() => {
+    const social = contact?.social
+    const list: Array<{ name: string; icon: React.ComponentType<{ className?: string }>; href: string }> = []
+
+    if (social?.instagram) list.push({ name: 'Instagram', icon: FaInstagram, href: social.instagram })
+    if (social?.facebook) list.push({ name: 'Facebook', icon: FaFacebookF, href: social.facebook })
+    if (social?.twitter) list.push({ name: 'X', icon: FaXTwitter, href: social.twitter })
+    if (social?.tiktok) list.push({ name: 'TikTok', icon: FaTiktok, href: social.tiktok })
+    if (social?.snapchat) list.push({ name: 'Snapchat', icon: FaSnapchat, href: social.snapchat })
+    if (social?.linkedin) list.push({ name: 'LinkedIn', icon: FaLinkedinIn, href: social.linkedin })
+    if (contact?.whatsapp) {
+      const waNumber = contact.whatsapp.replace(/[^0-9]/g, '')
+      list.push({
+        name: 'WhatsApp',
+        icon: FaWhatsapp,
+        href: `https://wa.me/${waNumber}`,
+      })
+    }
+
+    if (list.length === 0) {
+      return [
+        { name: 'Instagram', icon: FaInstagram, href: 'https://instagram.com' },
+        { name: 'Facebook', icon: FaFacebookF, href: 'https://facebook.com' },
+        { name: 'X', icon: FaXTwitter, href: 'https://x.com' },
+        { name: 'YouTube', icon: FaYoutube, href: 'https://youtube.com' },
+      ]
+    }
+
+    return list
+  }, [contact])
+
+  const address = contact?.address || intl.formatMessage({ id: 'footer.contact.location' })
+  const phone = contact?.phone || intl.formatMessage({ id: 'footer.contact.phone' })
+  const emailAddress = contact?.email || intl.formatMessage({ id: 'footer.contact.email' })
+  const whatsapp = contact?.whatsapp
+  const mapUrl = contact?.mapUrl
 
 
   return (
@@ -293,22 +329,57 @@ export const Footer = () => {
               {intl.formatMessage({ id: 'footer.section.contact' })}
             </h4>
             <div className="space-y-3 text-sm text-tertiary">
-              <div className="flex items-start gap-3">
-                <MapPin className="size-4 shrink-0 mt-0.5 text-secondary" />
-                <span>{intl.formatMessage({ id: 'footer.contact.location' })}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="size-4 shrink-0 text-secondary" />
-                <span dir="ltr" className="font-medium text-foreground/90">
-                  {intl.formatMessage({ id: 'footer.contact.phone' })}
+              {mapUrl ? (
+                <a
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 hover:text-secondary transition-colors group/loc"
+                >
+                  <FaLocationDot className="size-4 shrink-0 mt-0.5 text-secondary group-hover/loc:scale-110 transition-transform" />
+                  <span>{address}</span>
+                </a>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <FaLocationDot className="size-4 shrink-0 mt-0.5 text-secondary" />
+                  <span>{address}</span>
+                </div>
+              )}
+
+              <a
+                href={`tel:${phone.replace(/\s+/g, '')}`}
+                className="flex items-center gap-3 hover:text-secondary transition-colors group/tel"
+              >
+                <FaPhone className="size-4 shrink-0 text-secondary group-hover/tel:scale-110 transition-transform" />
+                <span dir="ltr" className="font-medium text-foreground/90 group-hover/tel:text-secondary transition-colors">
+                  {phone}
                 </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="size-4 shrink-0 text-secondary" />
-                <span>{intl.formatMessage({ id: 'footer.contact.email' })}</span>
-              </div>
+              </a>
+
+              {whatsapp && (
+                <a
+                  href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors group/wa"
+                >
+                  <FaWhatsapp className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400 group-hover/wa:scale-110 transition-transform" />
+                  <span dir="ltr" className="font-medium text-foreground/90 group-hover/wa:text-emerald-600 dark:group-hover/wa:text-emerald-400 transition-colors">
+                    {whatsapp}
+                  </span>
+                </a>
+              )}
+
+              <a
+                href={`mailto:${emailAddress}`}
+                className="flex items-center gap-3 hover:text-secondary transition-colors group/mail"
+              >
+                <FaEnvelope className="size-4 shrink-0 text-secondary group-hover/mail:scale-110 transition-transform" />
+                <span className="group-hover/mail:text-secondary transition-colors">{emailAddress}</span>
+              </a>
+
               <div className="flex items-start gap-3">
-                <Clock className="size-4 shrink-0 mt-0.5 text-secondary" />
+                <FaClock className="size-4 shrink-0 mt-0.5 text-secondary" />
                 <span>{intl.formatMessage({ id: 'footer.contact.hours' })}</span>
               </div>
             </div>

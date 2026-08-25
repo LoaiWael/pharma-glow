@@ -1,4 +1,4 @@
-import { mockProducts, type Product } from '@/features/products'
+import { fetchProducts, type Product } from '@/features/products'
 import type {
   EnrichedOrder,
   EnrichedOrdersList,
@@ -13,8 +13,7 @@ export const EMPTY_ORDERS: OrdersList = {
 }
 
 /**
- * Mock orders reference real catalog products by `productId`.
- * Name, photo, price, and other display data are resolved from `mockProducts`.
+ * Mock orders reference catalog products by `productId` (API numeric ids).
  */
 export const MOCK_ORDERS_LIST: Order[] = [
   {
@@ -32,8 +31,8 @@ export const MOCK_ORDERS_LIST: Order[] = [
       building: 'Building 12, apt 4',
     },
     items: [
-      { id: 'oi-1a', productId: 'p1', quantity: 1, selectedVolume: '30 مل' },
-      { id: 'oi-1b', productId: 'p3', quantity: 1, selectedVolume: '50 مل' },
+      { id: 'oi-1a', productId: 1, quantity: 1, selectedVolume: '30 مل' },
+      { id: 'oi-1b', productId: 2, quantity: 1, selectedVolume: '50 مل' },
     ],
   },
   {
@@ -50,43 +49,7 @@ export const MOCK_ORDERS_LIST: Order[] = [
       street: 'Tahrir Street',
       building: 'Building 8, apt 2',
     },
-    items: [{ id: 'oi-2a', productId: 'p5', quantity: 1, selectedVolume: '50 مل' }],
-  },
-  {
-    id: 'PG-1081503344',
-    placedAt: '2026-08-10T16:40:00.000Z',
-    status: 'delivered',
-    paymentMethod: 'cash_on_delivery',
-    shippingCost: 0,
-    contact: { fullName: 'Sara Ahmed', phone: '01012340112' },
-    address: {
-      country: 'EG',
-      governorateId: 'cairo',
-      city: 'Nasr City',
-      street: 'Abbas El Akkad St.',
-      building: 'Building 12, apt 4',
-    },
-    items: [
-      { id: 'oi-3a', productId: 'p8', quantity: 2 },
-      { id: 'oi-3b', productId: 'p11', quantity: 1 },
-      { id: 'oi-3c', productId: 'p2', quantity: 1 },
-    ],
-  },
-  {
-    id: 'PG-1571509876',
-    placedAt: '2026-07-15T11:12:00.000Z',
-    status: 'cancelled',
-    paymentMethod: 'cash_on_delivery',
-    shippingCost: 25,
-    contact: { fullName: 'Sara Ahmed', phone: '01012340112' },
-    address: {
-      country: 'EG',
-      governorateId: 'alexandria',
-      city: 'Stanley',
-      street: 'Corniche Road',
-      building: 'Villa 3',
-    },
-    items: [{ id: 'oi-4a', productId: 'p4', quantity: 1 }],
+    items: [{ id: 'oi-2a', productId: 1, quantity: 1, selectedVolume: '50 مل' }],
   },
 ]
 
@@ -94,21 +57,37 @@ export const MOCK_ORDERS: OrdersList = {
   orders: MOCK_ORDERS_LIST,
 }
 
-const findProductById = (productId: Product['id']): Product | undefined => {
+const findProductById = (
+  products: Product[],
+  productId: Product['id'],
+): Product | undefined => {
   const cleanId = String(productId).toLowerCase().trim()
-  return mockProducts.find((product) => String(product.id).toLowerCase() === cleanId)
+  return products.find(
+    (product) =>
+      String(product.id).toLowerCase() === cleanId ||
+      String(product.slug ?? '').toLowerCase() === cleanId,
+  )
 }
 
-export const enrichOrderItems = (items: OrderItem[]): OrderLineItem[] =>
+export const enrichOrderItems = (
+  items: OrderItem[],
+  products: Product[],
+): OrderLineItem[] =>
   items.flatMap((item) => {
-    const product = findProductById(item.productId)
+    const product = findProductById(products, item.productId)
     if (!product) return []
     return [{ ...item, product }]
   })
 
-export const enrichOrder = (order: Order): EnrichedOrder => {
-  const items = enrichOrderItems(order.items)
-  const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+export const enrichOrder = (
+  order: Order,
+  products: Product[],
+): EnrichedOrder => {
+  const items = enrichOrderItems(order.items, products)
+  const subtotal = items.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0,
+  )
   const total = subtotal + order.shippingCost
 
   return {
@@ -119,6 +98,11 @@ export const enrichOrder = (order: Order): EnrichedOrder => {
   }
 }
 
-export const enrichOrders = (list: OrdersList): EnrichedOrdersList => ({
-  orders: list.orders.map(enrichOrder),
-})
+export const enrichOrders = async (
+  list: OrdersList,
+): Promise<EnrichedOrdersList> => {
+  const products = await fetchProducts({ perPage: 50 })
+  return {
+    orders: list.orders.map((order) => enrichOrder(order, products)),
+  }
+}

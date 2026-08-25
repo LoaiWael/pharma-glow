@@ -1,4 +1,5 @@
 export type {
+  CatalogProductType,
   Product,
   ProductCardProps,
   ProductCategory,

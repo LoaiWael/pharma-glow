@@ -81,6 +81,7 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
   const direction = LOCALE_DIR[locale];
 
   const id = product?.id ?? propId ?? "1";
+  const slug = product?.slug ?? String(id);
   const title = product?.titleAr ?? product?.title ?? propTitle ?? "";
   const singleImage = product?.image ?? propImage;
   const imageList =
@@ -206,7 +207,9 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
     if (onClick) {
       onClick(id);
     } else {
-      navigate(`/products/${id}`, { viewTransition: true });
+      navigate(getLocalizedPath(`/products/${slug}`, locale), {
+        viewTransition: true,
+      });
     }
   };
 
@@ -290,11 +293,14 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
             >
               <CarouselContent className="h-full -ml-0">
                 {imageList.map((imgSrc, idx) => (
-                  <CarouselItem key={idx} className="pl-0 h-full">
+                  <CarouselItem
+                    key={idx}
+                    className="pl-0 h-full flex items-center justify-center"
+                  >
                     <ProductImage
                       src={imgSrc}
                       alt={`${title} - ${idx + 1}`}
-                      className="w-full h-full object-contain p-2 mix-blend-multiply dark:mix-blend-normal"
+                      className="max-h-full max-w-full object-contain object-center mix-blend-multiply dark:mix-blend-normal"
                     />
                   </CarouselItem>
                 ))}
@@ -325,7 +331,7 @@ export const ProductCardMobile: React.FC<ProductCardProps> = ({
           <ProductImage
             src={imageList[0]}
             alt={title}
-            className="w-full h-full object-contain p-2 mix-blend-multiply dark:mix-blend-normal"
+            className="max-h-full max-w-full object-contain object-center mix-blend-multiply dark:mix-blend-normal"
           />
         )}
       </div>

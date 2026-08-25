@@ -18,6 +18,7 @@ import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { getLocalizedPath } from "@/i18n/navigation";
 import { NavActions, NavSearch } from "@/layout/NavActions";
 import { cn } from "@/lib/utils";
+import { useContactSettings } from "@/features/contact";
 
 export interface NavItemConfig {
   label: string;
@@ -29,7 +30,8 @@ export interface NavItemConfig {
 export const DesktopHeader = () => {
   const intl = useIntl();
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
-  const brandName = intl.formatMessage({ id: "brand.name" });
+  const { data: contact } = useContactSettings();
+  const brandName = contact?.appName || intl.formatMessage({ id: "brand.name" });
   const [isSubBarOpen, setIsSubBarOpen] = useState(false);
 
   // Primary navigation items (Home, Products, Offers, Skincare, Bodycare)

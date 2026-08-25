@@ -8,6 +8,8 @@ import {
   ProductCard,
   ProductCardMobile,
   ProductFilters,
+  ProductEmptyState,
+  ProductGridSkeleton,
   type Product,
   type ProductType,
 } from "@/features/products";
@@ -222,7 +224,7 @@ export const ProductsPage: React.FC = () => {
     // Cart persistence handled elsewhere; Sonner toast is shown from ProductCard.
   };
 
-  const { data: filteredProducts = [] } = useProducts({
+  const { data: filteredProducts = [], isPending } = useProducts({
     searchQuery,
     activeFilter,
     productType: selectedType,
@@ -359,16 +361,23 @@ export const ProductsPage: React.FC = () => {
 
           {/* Products Grid Content Area */}
           <div className="flex-1 w-full min-w-0">
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.length > 0 ? (
+            <AnimatePresence mode="wait">
+              {isPending ? (
+                <ProductGridSkeleton count={9} />
+              ) : filteredProducts.length > 0 ? (
                 <motion.div
+                  key="products-grid"
                   layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                   className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-4 xl:gap-4.5 justify-items-center"
                 >
                   <AnimatePresence mode="popLayout">
                     {filteredProducts.map((product) => (
                       <motion.div
-                        key={product.id}
+                        key={product.slug ?? product.id}
                         layout
                         variants={itemProductCardVariants}
                         initial="hidden"
@@ -393,24 +402,10 @@ export const ProductsPage: React.FC = () => {
                   </AnimatePresence>
                 </motion.div>
               ) : (
-                <motion.div
-                  key="empty-state"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-center py-16 bg-white dark:bg-neutral-900 rounded-3xl border border-gray-200/80 dark:border-neutral-800 space-y-3 w-full"
-                >
-                  <p className="text-gray-500 dark:text-gray-400 text-base font-semibold">
-                    <FormattedMessage id="products.empty" />
-                  </p>
-                  <button
-                    onClick={handleResetFilters}
-                    className="text-xs font-bold text-secondary underline hover:text-primary transition-colors cursor-pointer"
-                  >
-                    <FormattedMessage id="products.resetFilters" />
-                  </button>
-                </motion.div>
+                <ProductEmptyState
+                  showResetCta={hasActiveFilters}
+                  onResetFilters={handleResetFilters}
+                />
               )}
             </AnimatePresence>
           </div>

@@ -50,7 +50,7 @@ export const ProductInfoMain: React.FC<ProductInfoMainProps> = ({
     onSelectVolume?.(vol);
   };
 
-  const reviewsPath = `/products/${product.id}/reviews`;
+  const reviewsPath = `/products/${product.slug ?? product.id}/reviews`;
 
   return (
     <div className={cn("flex flex-col gap-4 text-foreground", className)}>

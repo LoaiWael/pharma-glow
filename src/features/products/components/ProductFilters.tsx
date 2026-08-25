@@ -15,6 +15,7 @@ import {
 import { useIntl, FormattedMessage } from "react-intl";
 import type { ProductType } from "../types";
 import { useProductFilterMeta } from "../api/use-products";
+import { useProductTypes } from "../api/use-product-types";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -44,24 +45,15 @@ export interface ProductFiltersProps {
   totalFilteredCount: number;
   className?: string;
   isSidebar?: boolean;
+  /** Optional slug allowlist (e.g. skincare page). When set, only those API types show. */
   allowedProductTypes?: ProductType[];
   hideHeader?: boolean;
 }
 
-const defaultProductTypeOptions: { id: ProductType; labelKey: string }[] = [
-  { id: "all", labelKey: "products.filters.type.all" },
-  { id: "serum", labelKey: "products.filters.type.serum" },
-  { id: "cream", labelKey: "products.filters.type.cream" },
-  { id: "cleanser", labelKey: "products.filters.type.cleanser" },
-  { id: "sunscreen", labelKey: "products.filters.type.sunscreen" },
-  { id: "oil", labelKey: "products.filters.type.oil" },
-  { id: "scrub", labelKey: "products.filters.type.scrub" },
-  { id: "lotion", labelKey: "products.filters.type.lotion" },
-  { id: "gel", labelKey: "products.filters.type.gel" },
-  { id: "butter", labelKey: "products.filters.type.butter" },
-  { id: "toner", labelKey: "products.filters.type.toner" },
-  { id: "set", labelKey: "products.filters.type.set" },
-];
+type ProductTypeOption = {
+  id: ProductType;
+  label: string;
+};
 
 export const ProductFilters: React.FC<ProductFiltersProps> = ({
   searchQuery,
@@ -87,15 +79,29 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   const intl = useIntl();
   const [isSortOpen, setIsSortOpen] = useState(false);
   const { data: filterMeta } = useProductFilterMeta();
+  const { data: catalogTypes = [], isPending: isTypesPending } =
+    useProductTypes();
 
-  const productTypeOptions = React.useMemo(() => {
-    if (!allowedProductTypes || allowedProductTypes.length === 0) {
-      return defaultProductTypeOptions;
-    }
-    return defaultProductTypeOptions.filter(
-      (opt) => opt.id === "all" || allowedProductTypes.includes(opt.id),
-    );
-  }, [allowedProductTypes]);
+  const productTypeOptions = React.useMemo((): ProductTypeOption[] => {
+    const allOption: ProductTypeOption = {
+      id: "all",
+      label: intl.formatMessage({ id: "products.filters.type.all" }),
+    };
+
+    const fromApi = catalogTypes
+      .filter(
+        (type) =>
+          !allowedProductTypes ||
+          allowedProductTypes.length === 0 ||
+          allowedProductTypes.includes(type.slug),
+      )
+      .map((type) => ({
+        id: type.slug as ProductType,
+        label: type.name,
+      }));
+
+    return [allOption, ...fromApi];
+  }, [allowedProductTypes, catalogTypes, intl]);
 
   // Local immediate input state with debounce sync to parent query
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -313,29 +319,36 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 </div>
 
                 <div className="flex flex-wrap gap-2 pt-0.5">
-                  {productTypeOptions.map((opt) => {
-                    const isSelected = selectedType === opt.id;
-                    return (
-                      <motion.button
-                        key={opt.id}
-                        type="button"
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => onTypeChange(opt.id)}
-                        className={cn(
-                          "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 border",
-                          isSelected
-                            ? "bg-secondary text-white border-secondary shadow-sm shadow-secondary/25"
-                            : "bg-gray-100/80 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-neutral-700",
-                        )}
-                      >
-                        {isSelected && (
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        )}
-                        <FormattedMessage id={opt.labelKey} />
-                      </motion.button>
-                    );
-                  })}
+                  {isTypesPending
+                    ? Array.from({ length: 6 }).map((_, index) => (
+                        <div
+                          key={index}
+                          className="h-8 w-16 rounded-xl bg-primary-100 animate-pulse"
+                        />
+                      ))
+                    : productTypeOptions.map((opt) => {
+                        const isSelected = selectedType === opt.id;
+                        return (
+                          <motion.button
+                            key={opt.id}
+                            type="button"
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => onTypeChange(opt.id)}
+                            className={cn(
+                              "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 border",
+                              isSelected
+                                ? "bg-secondary text-white border-secondary shadow-sm shadow-secondary/25"
+                                : "bg-gray-100/80 dark:bg-neutral-800 text-gray-700 dark:text-gray-300 border-transparent hover:bg-gray-200 dark:hover:bg-neutral-700",
+                            )}
+                          >
+                            {isSelected && (
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            )}
+                            {opt.label}
+                          </motion.button>
+                        );
+                      })}
                 </div>
               </div>
 

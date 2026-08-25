@@ -1,10 +1,11 @@
-import type { ProductFilterState } from "../types";
+import type { ProductFiltersParams } from "./products";
 
 export const productKeys = {
   all: ["products"] as const,
   lists: () => [...productKeys.all, "list"] as const,
-  list: (filters: Partial<ProductFilterState>) =>
+  list: (filters: ProductFiltersParams) =>
     [...productKeys.lists(), filters] as const,
   details: () => [...productKeys.all, "detail"] as const,
   detail: (id: string | number) => [...productKeys.details(), id] as const,
+  types: () => [...productKeys.all, "types"] as const,
 };

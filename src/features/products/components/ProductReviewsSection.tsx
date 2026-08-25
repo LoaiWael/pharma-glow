@@ -111,7 +111,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
 
         {showViewAllButton && (
           <Link
-            to={`/products/${product.id}/reviews`}
+            to={`/products/${product.slug ?? product.id}/reviews`}
             viewTransition
             className="inline-flex items-center gap-1.5 text-xs font-bold text-secondary hover:text-secondary-700 transition-colors"
           >
@@ -297,7 +297,7 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
       {showViewAllButton && defaultReviews.length > 0 && (
         <div className="pt-2 flex justify-center">
           <Link
-            to={`/products/${product.id}/reviews`}
+            to={`/products/${product.slug ?? product.id}/reviews`}
             viewTransition
             className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border border-secondary/30 bg-secondary/10 hover:bg-secondary/20 text-secondary font-bold text-xs transition-colors"
           >

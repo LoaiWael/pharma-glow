@@ -12,12 +12,14 @@ import type { MessageKey } from '@/i18n/messages/en'
 import { getLocalizedPath } from '@/i18n/navigation'
 import { useCart } from '@/features/cart'
 import { useWishlist } from '@/features/wishlist'
+import { useContactSettings } from '@/features/contact'
 import { NavActions, NavSearch } from '@/layout/NavActions'
 
 export const Header = () => {
   const intl = useIntl()
   const locale: Locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE
-  const brandName = intl.formatMessage({ id: 'brand.name' })
+  const { data: contact } = useContactSettings()
+  const brandName = contact?.appName || intl.formatMessage({ id: 'brand.name' })
 
   const [hidden, setHidden] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)

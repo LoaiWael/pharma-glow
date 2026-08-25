@@ -12,8 +12,13 @@ export interface HomeBanner {
 
 export interface HomeCategory {
   id: string
-  titleKey: MessageKey
+  /** i18n key for curated tiles */
+  titleKey?: MessageKey
+  /** Plain label from API categories */
+  title?: string
   descriptionKey?: MessageKey
   imageSrc: string
   href: string
+  /** When true, image is the brand logo fallback (render rounded / contained). */
+  isLogoFallback?: boolean
 }

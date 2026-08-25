@@ -1,54 +1,52 @@
-import { mockProducts, type Product } from '@/features/products'
-import type { EnrichedWishlist, Wishlist, WishlistItem, WishlistLineItem } from '../types'
+import { fetchProducts, type Product } from '@/features/products'
+import type {
+  EnrichedWishlist,
+  Wishlist,
+  WishlistItem,
+  WishlistLineItem,
+} from '../types'
 
 export const EMPTY_WISHLIST: Wishlist = {
   items: [],
 }
 
 /**
- * Mock wishlist lines reference real catalog products by `productId`.
- * Name, photo, price, and other display data are resolved from `mockProducts`.
+ * Mock wishlist lines reference catalog products by `productId` (API numeric ids).
  */
 export const MOCK_WISHLIST_ITEMS: WishlistItem[] = [
-  {
-    id: 'wi-1',
-    productId: 'p2',
-  },
-  {
-    id: 'wi-2',
-    productId: 'p4',
-  },
-  {
-    id: 'wi-3',
-    productId: 'p6',
-  },
-  {
-    id: 'wi-4',
-    productId: 'p9',
-  },
-  {
-    id: 'wi-5',
-    productId: 'p12',
-  },
+  { id: 'wi-1', productId: 1 },
+  { id: 'wi-2', productId: 2 },
 ]
 
 export const MOCK_WISHLIST: Wishlist = {
   items: MOCK_WISHLIST_ITEMS,
 }
 
-const findProductById = (productId: Product['id']): Product | undefined => {
+const findProductById = (
+  products: Product[],
+  productId: Product['id'],
+): Product | undefined => {
   const cleanId = String(productId).toLowerCase().trim()
-  return mockProducts.find((product) => String(product.id).toLowerCase() === cleanId)
+  return products.find(
+    (product) =>
+      String(product.id).toLowerCase() === cleanId ||
+      String(product.slug ?? '').toLowerCase() === cleanId,
+  )
 }
 
-/** Resolve wishlist line items against the products catalog for name, photo, price, etc. */
-export const enrichWishlistItems = (items: WishlistItem[]): WishlistLineItem[] =>
-  items.flatMap((item) => {
-    const product = findProductById(item.productId)
+export const enrichWishlistItems = async (
+  items: WishlistItem[],
+): Promise<WishlistLineItem[]> => {
+  const products = await fetchProducts({ perPage: 50 })
+  return items.flatMap((item) => {
+    const product = findProductById(products, item.productId)
     if (!product) return []
     return [{ ...item, product }]
   })
+}
 
-export const enrichWishlist = (wishlist: Wishlist): EnrichedWishlist => ({
-  items: enrichWishlistItems(wishlist.items),
+export const enrichWishlist = async (
+  wishlist: Wishlist,
+): Promise<EnrichedWishlist> => ({
+  items: await enrichWishlistItems(wishlist.items),
 })

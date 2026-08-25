@@ -7,11 +7,13 @@ import CheckoutPage from '@/pages/CheckoutPage'
 import OrderConfirmationPage from '@/pages/OrderConfirmationPage'
 import { HomePage } from '@/pages/HomePage'
 import HowToOrderPage from '@/pages/HowToOrderPage'
+import LoginPage from '@/pages/LoginPage'
 import OffersPage from '@/pages/OffersPage'
 import OrdersPage from '@/pages/OrdersPage'
 import ProductDetailsPage from '@/pages/ProductDetailsPage'
 import ProductReviewsPage from '@/pages/ProductReviewsPage'
 import ProductsPage from '@/pages/ProductsPage'
+import RegisterPage from '@/pages/RegisterPage'
 import ReviewsPage from '@/pages/ReviewsPage'
 import SkinCarePage from '@/pages/SkinCarePage'
 import WishlistPage from '@/pages/WishlistPage'
@@ -30,6 +32,8 @@ const localeChildren = [
   { path: 'cart', element: <CartPage /> },
   { path: 'checkout', element: <CheckoutPage /> },
   { path: 'order-confirmation/:orderId', element: <OrderConfirmationPage /> },
+  { path: 'login', element: <LoginPage /> },
+  { path: 'register', element: <RegisterPage /> },
   { path: 'account', element: <AccountPage /> },
   { path: 'orders', element: <OrdersPage /> },
 ]

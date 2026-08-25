@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { toast } from "sonner";
+import { AnimatePresence, motion } from "motion/react";
 import {
   ChevronLeft,
   ChevronRight,
   Home,
-  ArrowLeft,
-  ArrowRight,
 } from "lucide-react";
 import {
   useProduct,
@@ -20,6 +19,9 @@ import {
   ProductOverviewTabs,
   ProductReviewsSection,
   ProductRelevantCarousel,
+  ProductDetailSkeleton,
+  RelatedProductsSkeleton,
+  ProductEmptyState,
   type Product,
 } from "@/features/products";
 import { DEFAULT_LOCALE, isLocale, LOCALE_DIR } from "@/i18n/locales";
@@ -31,72 +33,36 @@ export const ProductDetailsPage: React.FC = () => {
   const intl = useIntl();
   const locale = isLocale(intl.locale) ? intl.locale : DEFAULT_LOCALE;
   const isRtl = LOCALE_DIR[locale] === "rtl";
+  const productKey = id || "";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [id]);
 
-  const { data: product, isLoading } = useProduct(id || "p1");
-  const { data: relatedProducts = [] } = useRelatedProducts(
-    id || "p1",
-    product?.category,
-  );
+  const { data: product, isPending, isError } = useProduct(productKey);
+  const {
+    data: relatedProducts = [],
+    isPending: isRelatedPending,
+  } = useRelatedProducts(product?.id ?? productKey, product?.category);
 
   const [selectedVolume, setSelectedVolume] = useState<string | undefined>(
     product?.volume,
   );
   const [isFav, setIsFav] = useState(product?.isFavorite || false);
 
-  if (isLoading) {
-    return (
-      <div className="mx-auto max-w-[var(--page-max-width)] px-4 sm:px-6 lg:px-8 py-8 animate-pulse flex flex-col gap-6">
-        <div className="h-6 w-48 bg-gray-200 dark:bg-neutral-800 rounded-md" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="flex flex-col gap-4">
-            <div className="h-[460px] bg-gray-200 dark:bg-neutral-800 rounded-2xl" />
-            <div className="h-[220px] bg-gray-200 dark:bg-neutral-800 rounded-2xl" />
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="h-8 bg-gray-200 dark:bg-neutral-800 rounded-md w-3/4" />
-            <div className="h-6 bg-gray-200 dark:bg-neutral-800 rounded-md w-1/2" />
-            <div className="h-40 bg-gray-200 dark:bg-neutral-800 rounded-2xl" />
-          </div>
-        </div>
-      </div>
-    );
+  useEffect(() => {
+    setSelectedVolume(product?.volume);
+    setIsFav(product?.isFavorite || false);
+  }, [product]);
+
+  if (isPending) {
+    return <ProductDetailSkeleton />;
   }
 
-  if (!product) {
+  if (isError || !product) {
     return (
-      <div className="mx-auto max-w-[var(--page-max-width)] px-4 py-16 text-center flex flex-col items-center gap-4">
-        <h2 className="text-xl font-bold text-foreground">
-          {intl.formatMessage({
-            id: "product.notFound.title",
-            defaultMessage: "المنتج غير موجود",
-          })}
-        </h2>
-        <p className="text-sm text-tertiary">
-          {intl.formatMessage({
-            id: "product.notFound.desc",
-            defaultMessage: "ربما تم حذف المنتج أو أن الرابط غير صحيح.",
-          })}
-        </p>
-        <Link
-          to="/products"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm"
-        >
-          {isRtl ? (
-            <ArrowRight className="w-4 h-4" />
-          ) : (
-            <ArrowLeft className="w-4 h-4" />
-          )}
-          <span>
-            {intl.formatMessage({
-              id: "product.notFound.browse",
-              defaultMessage: "تصفح جميع المنتجات",
-            })}
-          </span>
-        </Link>
+      <div className="mx-auto max-w-[var(--page-max-width)] px-4 py-16">
+        <ProductEmptyState />
       </div>
     );
   }
@@ -256,11 +222,13 @@ export const ProductDetailsPage: React.FC = () => {
         </div>
 
         {/* Frequently Bought Together (Routine Bundle Builder) */}
-        <FrequentlyBoughtTogether
-          mainProduct={product}
-          complementaryProducts={relatedProducts}
-          onAddBundleToCart={handleAddBundleToCart}
-        />
+        {relatedProducts.length > 0 && (
+          <FrequentlyBoughtTogether
+            mainProduct={product}
+            complementaryProducts={relatedProducts}
+            onAddBundleToCart={handleAddBundleToCart}
+          />
+        )}
 
         {/* Product Overview, Specifications & How-to-use Tabs */}
         <ProductOverviewTabs product={product} />
@@ -269,13 +237,27 @@ export const ProductDetailsPage: React.FC = () => {
         <ProductReviewsSection product={product} />
 
         {/* More Relevant Products Carousel */}
-        <ProductRelevantCarousel
-          products={relatedProducts}
-          title={intl.formatMessage({
-            id: "product.relevant.title",
-            defaultMessage: "منتجات مشابهة وموصى بها لروتينك",
-          })}
-        />
+        <AnimatePresence mode="wait">
+          {isRelatedPending ? (
+            <RelatedProductsSkeleton />
+          ) : relatedProducts.length > 0 ? (
+            <motion.div
+              key="related-products"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <ProductRelevantCarousel
+                products={relatedProducts}
+                title={intl.formatMessage({
+                  id: "product.relevant.title",
+                  defaultMessage: "منتجات مشابهة وموصى بها لروتينك",
+                })}
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
 
       {/* Fixed Sticky Action Bar on Small/Mobile Screens */}
