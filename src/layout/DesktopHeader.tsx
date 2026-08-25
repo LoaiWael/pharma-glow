@@ -102,9 +102,6 @@ export const DesktopHeader = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               />
-              <span className="text-base font-semibold tracking-tight text-secondary transition-colors group-hover:text-secondary-700">
-                {brandName}
-              </span>
             </NavLink>
 
             <div className="h-5 w-px bg-primary-200" aria-hidden="true" />

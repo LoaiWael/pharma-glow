@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from 'react'
-import { Camera, LogOut, Sparkles, Trash2 } from 'lucide-react'
+import { Camera, LogOut, Trash2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useIntl } from 'react-intl'
 import { toast } from 'sonner'
@@ -88,11 +88,7 @@ export const AccountHero = ({ profile, locale, isSavingPhoto, onSavePhoto, onLog
           </div>
 
           <div className="flex flex-col items-center sm:items-start">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-secondary/10 px-2.5 py-0.5 text-xs font-semibold tracking-wide text-secondary uppercase">
-              <Sparkles className="size-3" />
-              <span>{message('account.glowMember')}</span>
-            </div>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
               {displayName}
             </h1>
             <p className="mt-1 text-sm text-tertiary">

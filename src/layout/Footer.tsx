@@ -172,9 +172,6 @@ export const Footer = () => {
                   alt={brandName}
                   className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
-                <span className="text-xl font-bold tracking-tight text-secondary">
-                  {brandName}
-                </span>
               </Link>
               <p className="text-sm text-tertiary leading-relaxed max-w-sm">
                 {intl.formatMessage({ id: 'footer.tagline' })}
